@@ -1,5 +1,5 @@
 <!doctype html>
-<!-- Cordobés Taxi Iguazú · versión 1.1 · 14/10/2026 -->
+<!-- Cordobés Taxi Iguazú · versión 1.3 · 14/10/2026 -->
 <html lang="es-AR">
 <head>
 <meta charset="utf-8">
@@ -34,7 +34,7 @@
 }
 [hidden]{display:none!important}
 *{box-sizing:border-box}
-html{scroll-behavior:smooth;scroll-padding-top:84px}
+html{overflow-x:clip;scroll-behavior:smooth;scroll-padding-top:124px}
 body{margin:0;background:var(--night);color:var(--ink);font:400 1.0625rem/1.65 var(--f-b);overflow-x:clip}
 p{margin:0}
 a{color:inherit}
@@ -67,6 +67,10 @@ main,header,footer{position:relative;z-index:1}
 /* header */
 .hd{position:sticky;top:env(safe-area-inset-top,0px);z-index:60;background:#04130fcc;backdrop-filter:blur(14px);-webkit-backdrop-filter:blur(14px);border-bottom:1px solid var(--line)}
 .hd .w{display:flex;align-items:center;justify-content:space-between;gap:16px;min-height:64px}
+.hd .lg .w{justify-content:flex-end;min-height:36px;border-bottom:1px solid var(--line)}
+.lgb{display:flex;gap:4px}
+.lg button{min-width:44px;min-height:30px;background:none;border:1px solid var(--line);border-radius:8px;color:var(--mute);font:600 .78rem var(--f-m);letter-spacing:.1em;cursor:pointer}
+.lg button[aria-pressed="true"]{background:var(--taxi);border-color:var(--taxi);color:#1a1300}
 .brand{display:flex;align-items:center;gap:12px;text-decoration:none;font:800 1.35rem var(--f-d);text-transform:uppercase;letter-spacing:.03em}
 .lamp{background:var(--taxi);color:#1a1300;font:800 .78rem var(--f-d);letter-spacing:.14em;padding:5px 10px;border-radius:7px;box-shadow:0 0 20px #ffc21acc}
 .nav{display:flex;gap:4px}
@@ -123,6 +127,7 @@ main,header,footer{position:relative;z-index:1}
 .pick{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:14px;margin-top:34px}
 .sb{display:flex;flex-direction:column;align-items:center;gap:6px;padding:22px 12px;border-radius:16px;border:0;cursor:pointer;color:#fff;background:var(--sign);box-shadow:inset 0 0 0 4px var(--sign),inset 0 0 0 7px #fff55f,0 16px 30px #0007;font:800 clamp(1.3rem,3.4vw,2rem) var(--f-d);text-transform:uppercase;letter-spacing:.04em;transition:transform .25s,box-shadow .25s}
 .sb svg{width:40px;height:40px}
+@media(max-width:480px){.sb{padding:16px 4px;font-size:.95rem;letter-spacing:0;min-width:0}.sb svg{width:30px;height:30px}.sb small{font-size:.6rem;letter-spacing:.02em}}
 .sb:hover{transform:translateY(-4px)}
 .sb[aria-pressed="true"]{box-shadow:inset 0 0 0 4px var(--sign),inset 0 0 0 7px #fff,0 0 0 4px var(--taxi),0 0 40px #ffc21a88}
 .sb small{font:500 .72rem var(--f-m);letter-spacing:.1em;color:#c9f3d8}
@@ -141,8 +146,8 @@ main,header,footer{position:relative;z-index:1}
 .dgl{margin-top:36px;font:800 1.2rem var(--f-d);text-transform:uppercase;letter-spacing:.06em;color:var(--taxi)}
 
 /* ventajas: tipografía que pasa */
-.vts{display:grid;gap:clamp(44px,9vh,90px);margin-top:44px}
-.vt .big{font:800 clamp(3.4rem,15.5vw,11rem)/.84 var(--f-d);text-transform:uppercase;color:transparent;-webkit-text-stroke:2px var(--ink);transition:color .5s}
+.vts{display:grid;grid-template-columns:minmax(0,1fr);gap:clamp(44px,9vh,90px);margin-top:44px}
+.vt .big{overflow-wrap:anywhere;font:800 clamp(2.4rem,12.5vw,11rem)/.9 var(--f-d);text-transform:uppercase;color:transparent;-webkit-text-stroke:2px var(--ink);transition:color .5s}
 .vt:hover .big{color:var(--taxi);-webkit-text-stroke-color:var(--taxi)}
 .vt p{max-width:58ch;margin-top:14px;color:#dcebe3;background:var(--glass);padding:16px 20px;border-radius:16px;border-left:5px solid var(--taxi)}
 
@@ -232,6 +237,7 @@ input:user-invalid,textarea:user-invalid{border-color:#ff8a7a}
 <a class="skip" href="#main">Saltar al contenido</a>
 
 <header class="hd">
+  <div class="lg"><div class="w"><div class="lgb" role="group" aria-label="Idioma · Língua · Language"><button type="button" data-l="es" lang="es" title="Español" aria-pressed="true">ES</button><button type="button" data-l="pt" lang="pt" title="Português" aria-pressed="false">PT</button><button type="button" data-l="en" lang="en" title="English" aria-pressed="false">EN</button></div></div></div>
   <div class="w">
     <a class="brand" href="#inicio" aria-label="Cordobés Taxi Iguazú, inicio"><span class="lamp">TAXI</span>Cordobés Iguazú</a>
     <button class="menu" aria-expanded="false" aria-controls="nav" aria-label="Abrir menú"><svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" aria-hidden="true"><path d="M4 7h16M4 12h16M4 17h16"/></svg></button>
@@ -907,11 +913,186 @@ input:user-invalid,textarea:user-invalid{border-color:#ff8a7a}
   f.addEventListener('submit',function(ev){
     ev.preventDefault();
     var v=function(id){return $('#'+id).value.trim()};
-    var txt='Hola, soy '+v('n')+'. '+v('m')+' (Tel: '+v('t')+' · Email: '+v('e')+')';
+    var txt=(window.HI||'Hola, soy ')+v('n')+'. '+v('m')+' (Tel: '+v('t')+' · Email: '+v('e')+')';
     var url='https://api.whatsapp.com/send?phone=5493548465150&text='+encodeURIComponent(txt);
     $('#wl').href=url;$('#out').hidden=false;
     try{window.open(url,'_blank')}catch(err){}
   });
+})();
+</script>
+<script>
+/* Idiomas: ES (original) · PT · EN. Traduce nodos de texto y atributos por diccionario; sin librerías. */
+(function(){
+  var D=[
+  ["Saltar al contenido","Ir para o conteúdo","Skip to content"],
+  ["Nosotros","Sobre nós","About us"],["Servicios","Serviços","Services"],["Destinos","Destinos","Destinations"],
+  ["Galería","Galeria","Gallery"],["Reseñas","Avaliações","Reviews"],["Contacto","Contato","Contact"],
+  ["Tu taxi en","Seu táxi em","Your taxi in"],
+  ["↑ Cataratas del Iguazú","↑ Cataratas do Iguaçu","↑ Iguazú Falls"],
+  ["Cordobés Taxi y traslados privados y seguros a Cataratas, aeropuerto y más.","Cordobés Taxi e transfers privados e seguros para as Cataratas, o aeroporto e muito mais.","Cordobés Taxi: private, safe transfers to the Falls, the airport and more."],
+  ["Reservar por WhatsApp","Reservar pelo WhatsApp","Book on WhatsApp"],
+  ["Arrancar el viaje ↓","Começar a viagem ↓","Start the ride ↓"],
+  ["Teléfono","Telefone","Phone"],
+  ["Baja para manejar","Role para dirigir","Scroll to drive"],
+  ["Más que un viaje, una experiencia confiable","Mais que uma viagem, uma experiência confiável","More than a ride, a trusted experience"],
+  ["En Cordobés Taxi y Traslados somos más que un simple servicio de transporte: somos tus anfitriones en una de las maravillas naturales más impresionantes del mundo. Con años de experiencia y un profundo conocimiento de la región, nuestro equipo de conductores profesionales se dedica a ofrecerte un servicio seguro, puntual y personalizado.",
+   "Na Cordobés Taxi y Traslados somos mais que um simples serviço de transporte: somos seus anfitriões em uma das maravilhas naturais mais impressionantes do mundo. Com anos de experiência e profundo conhecimento da região, nossa equipe de motoristas profissionais se dedica a oferecer um serviço seguro, pontual e personalizado.",
+   "At Cordobés Taxi y Traslados we are more than a transport service: we are your hosts at one of the most impressive natural wonders in the world. With years of experience and deep knowledge of the region, our team of professional drivers is dedicated to giving you a safe, punctual and personalized service."],
+  ["Nos enorgullece ser tu conexión con los lugares más emblemáticos de la triple frontera, desde las majestuosas Cataratas del Iguazú hasta los vibrantes centros de compras en Paraguay y Brasil. Nuestra flota está pensada para tu comodidad y seguridad, para que cada viaje sea placentero y memorable. Con nosotros no solo llegas a tu destino: lo haces con la confianza que solo un servicio local y dedicado puede darte.",
+   "Temos orgulho de ser sua conexão com os lugares mais emblemáticos da tríplice fronteira, das majestosas Cataratas do Iguaçu aos vibrantes centros de compras no Paraguai e no Brasil. Nossa frota foi pensada para o seu conforto e segurança, para que cada viagem seja agradável e memorável. Conosco você não apenas chega ao seu destino: chega com a confiança que só um serviço local e dedicado pode oferecer.",
+   "We are proud to be your connection to the most emblematic places of the Triple Frontier, from the majestic Iguazú Falls to the vibrant shopping centers in Paraguay and Brazil. Our fleet is designed for your comfort and safety, so every trip is pleasant and memorable. With us you don't just reach your destination: you arrive with the confidence that only a dedicated local service can give you."],
+  ["Explora nuestra galería de fotos","Explore nossa galeria de fotos","Explore our photo gallery"],
+  ["Valoración en Google","Avaliação no Google","Google rating"],
+  ["Reseñas de clientes","Avaliações de clientes","Customer reviews"],
+  ["Horas, en hoteles","Horas, em hotéis","Hours, at hotels"],
+  ["Países: AR, BR y PY","Países: AR, BR e PY","Countries: AR, BR and PY"],
+  ["Servicios destacados","Serviços em destaque","Featured services"],
+  ["Servicio de excelencia y atención a cada detalle","Serviço de excelência e atenção a cada detalhe","Outstanding service, attention to every detail"],
+  ["Puntualidad, seguridad y comodidad en Argentina, Brasil y Paraguay. Cada servicio pasa por tu ventanilla.","Pontualidade, segurança e conforto na Argentina, no Brasil e no Paraguai. Cada serviço passa pela sua janela.","Punctuality, safety and comfort in Argentina, Brazil and Paraguay. Every service goes by your window."],
+  ["Traslados desde y hacia los aeropuertos","Transfers de e para os aeroportos","Airport transfers"],
+  ["Viaja sin preocupaciones desde y hacia los aeropuertos de Foz de Iguazú (IGU) y Puerto Iguazú (IGR). Un traslado confiable y a tiempo a tu hotel o a cualquier otro destino en la ciudad.","Viaje sem preocupações de e para os aeroportos de Foz do Iguaçu (IGU) e Puerto Iguazú (IGR). Um transfer confiável e pontual até o seu hotel ou qualquer outro destino da cidade.","Travel worry-free to and from the airports of Foz do Iguaçu (IGU) and Puerto Iguazú (IGR). A reliable, on-time transfer to your hotel or any other destination in the city."],
+  ["Aeropuertos IGR · IGU","Aeroportos IGR · IGU","Airports IGR · IGU"],
+  ["Tours turísticos a medida en Iguazú","Passeios turísticos sob medida em Iguazú","Custom sightseeing tours in Iguazú"],
+  ["Explora las maravillas de la región con total comodidad. Tours privados a los principales puntos turísticos, como las Cataratas del Iguazú y el Parque das Aves, adaptados a tus horarios y preferencias para una experiencia inolvidable.","Explore as maravilhas da região com total conforto. Passeios privados aos principais pontos turísticos, como as Cataratas do Iguaçu e o Parque das Aves, adaptados aos seus horários e preferências para uma experiência inesquecível.","Explore the wonders of the region in total comfort. Private tours to the main sights, such as Iguazú Falls and Parque das Aves, tailored to your schedule and preferences for an unforgettable experience."],
+  ["Cataratas · Parque das Aves","Cataratas · Parque das Aves","Falls · Parque das Aves"],
+  ["Taxi 24 horas en hoteles","Táxi 24 horas em hotéis","24-hour taxi at hotels"],
+  ["Estamos a tu disposición en cualquier momento. Solicita tu taxi a cualquier hora del día o de la noche para traslados desde tu hotel, con movilidad y seguridad para cualquier compromiso o paseo nocturno.","Estamos à sua disposição a qualquer momento. Peça seu táxi a qualquer hora do dia ou da noite para sair do seu hotel, com mobilidade e segurança para qualquer compromisso ou passeio noturno.","We are at your service at any time. Request your taxi at any hour of the day or night from your hotel, with safe, reliable transport for any appointment or night out."],
+  ["Las 24 horas","As 24 horas","24 hours"],
+  ["Compras en Paraguay sin estrés","Compras no Paraguai sem estresse","Stress-free shopping in Paraguay"],
+  ["Disfruta de un tour de compras seguro y tranquilo. El servicio a Ciudad del Este te permite aprovechar al máximo tu tiempo para encontrar las mejores ofertas y productos, con la tranquilidad de un viaje sin complicaciones.","Aproveite um tour de compras seguro e tranquilo. O serviço até Ciudad del Este permite aproveitar ao máximo o seu tempo para encontrar as melhores ofertas e produtos, com a tranquilidade de uma viagem sem complicações.","Enjoy a safe, relaxed shopping tour. The service to Ciudad del Este lets you make the most of your time finding the best deals and products, with the peace of mind of a hassle-free trip."],
+  ["Servicios de taxi en la Triple Frontera","Serviços de táxi na Tríplice Fronteira","Taxi services in the Triple Frontier"],
+  ["Un solo taxi, tres países. Elige a dónde doblar","Um só táxi, três países. Escolha onde virar","One taxi, three countries. Choose where to turn"],
+  ["Nuestra flota te lleva a cualquier punto de interés de la región, en Argentina o en Brasil, y también a los sitios menos conocidos que muestran la verdadera esencia de la triple frontera. Toca un cartel y mira cómo gira el camino.","Nossa frota leva você a qualquer ponto de interesse da região, na Argentina ou no Brasil, e também aos lugares menos conhecidos que mostram a verdadeira essência da tríplice fronteira. Toque em uma placa e veja a estrada virar.","Our fleet takes you to any point of interest in the region, in Argentina or Brazil, and also to lesser-known places that show the true essence of the Triple Frontier. Tap a sign and watch the road turn."],
+  ["Paraguay","Paraguai","Paraguay"],["Brasil","Brasil","Brazil"],
+  ["Otros destinos en Argentina","Outros destinos na Argentina","Other destinations in Argentina"],
+  ["Parque Nacional Iguazú (lado argentino)","Parque Nacional Iguazú (lado argentino)","Iguazú National Park (Argentine side)"],
+  ["Casa de las Botellas","Casa das Garrafas","House of Bottles"],
+  ["Orquideario del Indio Solitario","Orquidário do Índio Solitário","Indio Solitario Orchid Garden"],
+  ["La Feirinha (Mercado Municipal de Puerto Iguazú)","A Feirinha (Mercado Municipal de Puerto Iguazú)","La Feirinha (Puerto Iguazú Municipal Market)"],
+  ["Otros destinos en Brasil","Outros destinos no Brasil","Other destinations in Brazil"],
+  ["Parque Nacional do Iguaçu (lado brasileño)","Parque Nacional do Iguaçu (lado brasileiro)","Iguaçu National Park (Brazilian side)"],
+  ["Usina Hidrelétrica de Itaipu (lado brasileño)","Usina Hidrelétrica de Itaipu (lado brasileiro)","Itaipu Hydroelectric Dam (Brazilian side)"],
+  ["Marco das Três Fronteiras (lado brasileño)","Marco das Três Fronteiras (lado brasileiro)","Three Borders Landmark (Brazilian side)"],
+  ["Dreams Park Show: Museo de Cera, Maravillas del Mundo, Valle de los Dinosaurios","Dreams Park Show: Museu de Cera, Maravilhas do Mundo, Vale dos Dinossauros","Dreams Park Show: Wax Museum, Wonders of the World, Dinosaur Valley"],
+  ["Otros destinos en Paraguay","Outros destinos no Paraguai","Other destinations in Paraguay"],
+  ["Lago de la República","Lago da República","Lake of the Republic"],
+  ["Museo de la Tierra Guaraní","Museu da Terra Guarani","Museum of the Guaraní Land"],
+  ["Aventura Extrema (tirolesa y senderismo)","Aventura Extrema (tirolesa e trilhas)","Extreme Adventure (zip line and hiking)"],
+  ["Servicios de traslado y turismo en Misiones","Serviços de transfer e turismo em Misiones","Transfer and tourism services in Misiones"],
+  ["Destinos en Puerto Iguazú y alrededores","Destinos em Puerto Iguazú e arredores","Destinations in Puerto Iguazú and around"],
+  ["Cataratas del Iguazú","Cataratas do Iguaçu","Iguazú Falls"],
+  ["Lado argentino y brasileño. El principal punto turístico, con circuitos de senderos y paseos en lancha.","Lado argentino e brasileiro. O principal ponto turístico, com circuitos de trilhas e passeios de lancha.","Argentine and Brazilian sides. The main attraction, with trail circuits and boat rides."],
+  ["Lado brasileño. Aviario en plena selva, a pocos minutos de las Cataratas.","Lado brasileiro. Aviário em plena selva, a poucos minutos das Cataratas.","Brazilian side. A rainforest aviary just minutes from the Falls."],
+  ["Hito de las Tres Fronteras","Marco das Três Fronteiras","Three Borders Landmark"],
+  ["Mirador a la confluencia de los ríos Iguazú y Paraná, donde se encuentran Brasil, Argentina y Paraguay.","Mirante na confluência dos rios Iguaçu e Paraná, onde se encontram Brasil, Argentina e Paraguai.","Lookout at the confluence of the Iguazú and Paraná rivers, where Brazil, Argentina and Paraguay meet."],
+  ["La Aripuca","A Aripuca","La Aripuca"],
+  ["Una atracción que rinde homenaje a la cultura local y a la importancia del bosque.","Uma atração que homenageia a cultura local e a importância da floresta.","An attraction honoring local culture and the importance of the forest."],
+  ["Jardín de los Picaflores","Jardim dos Beija-flores","Hummingbird Garden"],
+  ["Un lugar para observar de cerca diversas especies de colibríes.","Um lugar para observar de perto diversas espécies de beija-flores.","A place to watch many hummingbird species up close."],
+  ["Centro de rehabilitación y conservación de la fauna silvestre.","Centro de reabilitação e conservação da fauna silvestre.","Wildlife rehabilitation and conservation center."],
+  ["Ruinas de San Ignacio","Ruínas de San Ignacio","San Ignacio Ruins"],
+  ["Una de las misiones jesuíticas mejor conservadas de Argentina, Patrimonio Mundial de la UNESCO.","Uma das missões jesuíticas mais bem conservadas da Argentina, Patrimônio Mundial da UNESCO.","One of the best-preserved Jesuit missions in Argentina, a UNESCO World Heritage Site."],
+  ["Minas de Wanda","Minas de Wanda","Wanda Mines"],
+  ["Donde puedes ver y comprar piedras semipreciosas, como amatistas y ágatas.","Onde você pode ver e comprar pedras semipreciosas, como ametistas e ágatas.","Where you can see and buy semi-precious stones such as amethysts and agates."],
+  ["Salto del Moconá","Salto do Moconá","Moconá Falls"],
+  ["Una impresionante cascada que forma una falla en el río Uruguay.","Uma impressionante cachoeira que forma uma falha no rio Uruguai.","An impressive waterfall formed along a fault in the Uruguay River."],
+  ["Tours de compras","Tours de compras","Shopping tours"],
+  ["Grandes centros comerciales con una enorme variedad de productos, desde electrónicos hasta perfumes.","Grandes centros comerciais com enorme variedade de produtos, de eletrônicos a perfumes.","Large shopping centers with a huge variety of products, from electronics to perfumes."],
+  ["Salto Monday","Salto Monday","Monday Falls"],
+  ["Una hermosa cascada a pocos kilómetros del centro de la ciudad.","Uma linda cachoeira a poucos quilômetros do centro da cidade.","A beautiful waterfall a few kilometers from the city center."],
+  ["Ventajas","Vantagens","Advantages"],
+  ["¿Por qué contratar nuestro servicio?","Por que contratar nosso serviço?","Why choose our service?"],
+  ["Conocemos cada rincón de la región y te llevamos no solo a los sitios más famosos, sino también a lugares menos conocidos que te permiten descubrir la verdadera esencia de la triple frontera.","Conhecemos cada canto da região e levamos você não só aos lugares mais famosos, mas também a locais menos conhecidos que permitem descobrir a verdadeira essência da tríplice fronteira.","We know every corner of the region and take you not only to the most famous sites but also to lesser-known places that reveal the true essence of the Triple Frontier."],
+  ["Seguridad","Segurança","Safety"],
+  ["Seguridad y profesionalismo","Segurança e profissionalismo","Safety and professionalism"],
+  ["Conductores profesionales, experimentados y calificados, con un profundo conocimiento de la triple frontera. Priorizamos tu","Motoristas profissionais, experientes e qualificados, com profundo conhecimento da tríplice fronteira. Priorizamos sua","Professional, experienced and qualified drivers with deep knowledge of the Triple Frontier. We put your"],
+  ["seguridad","segurança","safety"],
+  ["por encima de todo, en vehículos modernos, con mantenimiento regular y equipados para el máximo confort.","acima de tudo, em veículos modernos, com manutenção regular e equipados para o máximo conforto.","above all, in modern, well-maintained vehicles equipped for maximum comfort."],
+  ["Puntualidad","Pontualidade","Punctuality"],
+  ["Puntualidad y flexibilidad","Pontualidade e flexibilidade","Punctuality and flexibility"],
+  ["Ya sea un traslado al aeropuerto, un paseo turístico o un viaje de compras, la","Seja um transfer ao aeroporto, um passeio turístico ou uma viagem de compras, a","Whether it's an airport transfer, a sightseeing trip or a shopping run,"],
+  ["puntualidad","pontualidade","punctuality"],
+  ["es nuestra prioridad. Un servicio a la medida de tu horario, sin esperas innecesarias, para aprovechar al máximo tu tiempo en Iguazú.","é a nossa prioridade. Um serviço sob medida para o seu horário, sem esperas desnecessárias, para aproveitar ao máximo o seu tempo em Iguazú.","is our priority. A service tailored to your schedule, with no unnecessary waiting, so you make the most of your time in Iguazú."],
+  ["Confianza","Confiança","Trust"],
+  ["Atención personalizada y confiable","Atendimento personalizado e confiável","Personal, reliable attention"],
+  ["Somos más que un servicio de taxi: somos tus guías en la región. Atención humanizada y transparente, siempre disponibles para responder tus preguntas y recomendarte los mejores lugares, para que tu experiencia sea","Somos mais que um serviço de táxi: somos seus guias na região. Atendimento humano e transparente, sempre disponíveis para responder suas perguntas e recomendar os melhores lugares, para que sua experiência seja","We are more than a taxi service: we are your guides in the region. Warm, transparent service, always available to answer your questions and recommend the best places, so your experience is"],
+  ["inolvidable","inesquecível","unforgettable"],
+  ["Reserva ya tu taxi o traslado por WhatsApp","Reserve já seu táxi ou transfer pelo WhatsApp","Book your taxi or transfer now on WhatsApp"],
+  ["Video","Vídeo","Video"],
+  ["Descubre las maravillas de Iguazú","Descubra as maravilhas de Iguazú","Discover the wonders of Iguazú"],
+  ["Mira el video de Cordobés Taxi Iguazú en YouTube.","Assista ao vídeo da Cordobés Taxi Iguazú no YouTube.","Watch the Cordobés Taxi Iguazú video on YouTube."],
+  ["Galería de fotos","Galeria de fotos","Photo gallery"],
+  ["Captura la esencia de tu próxima aventura en Iguazú","Capture a essência da sua próxima aventura em Iguazú","Capture the essence of your next adventure in Iguazú"],
+  ["Atardecer en las Cataratas","Pôr do sol nas Cataratas","Sunset at the Falls"],
+  ["Lo que nuestros clientes dicen de su experiencia","O que nossos clientes dizem da experiência","What our customers say about their experience"],
+  ["Basado en 32 reseñas de Google ·","Baseado em 32 avaliações do Google ·","Based on 32 Google reviews ·"],
+  ["Ver todas","Ver todas","See all"],
+  ["Dejar una reseña","Deixar uma avaliação","Leave a review"],
+  ["Pasajero","Passageiro","Passenger"],
+  ["Llegaste. Cuéntanos tu viaje","Você chegou. Conte-nos sua viagem","You've arrived. Tell us about your trip"],
+  ["Dirección","Endereço","Address"],["Redes","Redes sociais","Social"],
+  ["Primer nombre *","Primeiro nome *","First name *"],
+  ["Correo electrónico *","E-mail *","Email *"],
+  ["Número de teléfono *","Telefone *","Phone number *"],
+  ["Mensaje *","Mensagem *","Message *"],
+  ["Enviar mensaje por WhatsApp","Enviar mensagem pelo WhatsApp","Send message on WhatsApp"],
+  ["Tu mensaje está listo. Si WhatsApp no se abrió solo,","Sua mensagem está pronta. Se o WhatsApp não abrir sozinho,","Your message is ready. If WhatsApp didn't open by itself,"],
+  ["toca aquí para enviarlo","toque aqui para enviá-la","tap here to send it"],
+  ["Iguazú, donde la naturaleza revela su esplendor y cada viaje se convierte en un recuerdo eterno.","Iguazú, onde a natureza revela seu esplendor e cada viagem se torna uma lembrança eterna.","Iguazú, where nature reveals its splendor and every trip becomes an everlasting memory."],
+  ["NAVEGACIÓN","NAVEGAÇÃO","NAVIGATION"],["INFORMACIÓN","INFORMAÇÕES","INFORMATION"],
+  ["Home","Início","Home"],["Política de privacidad","Política de privacidade","Privacy policy"],
+  /* etiquetas del HUD (data-label) y atributos */
+  ["Puerto Iguazú · salida","Puerto Iguazú · saída","Puerto Iguazú · departure"],
+  ["Ruta 12 · nosotros","Rota 12 · sobre nós","Route 12 · about us"],
+  ["Triple Frontera · bifurcación","Tríplice Fronteira · bifurcação","Triple Frontier · fork in the road"],
+  ["Destinos · Misiones","Destinos · Misiones","Destinations · Misiones"],
+  ["Galería de postales","Galeria de cartões-postais","Postcard gallery"],
+  ["Tickets de pasajeros","Bilhetes de passageiros","Passenger tickets"],
+  ["Llegada · Cataratas","Chegada · Cataratas","Arrival · The Falls"],
+  ["Cordobés Taxi Iguazú, inicio","Cordobés Taxi Iguazú, início","Cordobés Taxi Iguazú, home"],
+  ["Abrir menú","Abrir menu","Open menu"],["Principal","Principal","Main"],
+  ["Elegir país","Escolher país","Choose a country"],
+  ["Mirar el video en YouTube (se abre en una pestaña nueva)","Assistir ao vídeo no YouTube (abre em nova aba)","Watch the video on YouTube (opens in a new tab)"],
+  ["Navegar reseñas","Navegar pelas avaliações","Browse reviews"],
+  ["Reseñas anteriores","Avaliações anteriores","Previous reviews"],["Reseñas siguientes","Próximas avaliações","Next reviews"],
+  ["5 estrellas de 5","5 estrelas de 5","5 stars out of 5"],
+  ["Reseñas de pasajeros, desliza para ver más","Avaliações de passageiros, deslize para ver mais","Passenger reviews, swipe to see more"],
+  ["Solo números, espacios, + y guiones (7 a 20 caracteres)","Somente números, espaços, + e hifens (7 a 20 caracteres)","Numbers, spaces, + and hyphens only (7 to 20 characters)"],
+  ["Navegación del pie","Navegação do rodapé","Footer navigation"],
+  ["Escribir por WhatsApp (se abre en una pestaña nueva)","Escrever pelo WhatsApp (abre em nova aba)","Write on WhatsApp (opens in a new tab)"]
+  ];
+  var X={pt:{},en:{}};
+  D.forEach(function(r){X.pt[r[0]]=r[1];X.en[r[0]]=r[2]});
+  /* el mensaje que llega por WhatsApp y los textos de <head> también cambian */
+  var HI={es:'Hola, soy ',pt:'Olá, sou ',en:"Hello, I'm "};
+  var HELLO={es:'Hola. Visité su sitio web y me gustaría obtener más información sobre sus servicios.',pt:'Olá. Visitei o site de vocês e gostaria de mais informações sobre seus serviços.',en:'Hello. I visited your website and would like more information about your services.'};
+  var HEAD={
+    es:null,
+    pt:['Cordobés Taxi Iguazú | Táxi e transfers para as Cataratas e aeroportos','Táxi e transfers privados e seguros em Puerto Iguazú: Cataratas, aeroportos IGR e IGU, passeios e compras no Paraguai. Disponível 24 horas em hotéis.'],
+    en:['Cordobés Taxi Iguazú | Taxi and transfers to the Falls and airports','Private, safe taxi and transfers in Puerto Iguazú: Iguazú Falls, IGR and IGU airports, tours and shopping in Paraguay. Available 24 hours at hotels.']
+  };
+  var HL={es:'es-AR',pt:'pt-BR',en:'en'};
+  var TX=[],AT=[],w=document.createTreeWalker(document.body,NodeFilter.SHOW_TEXT),n;
+  while((n=w.nextNode())){var p=n.parentElement;if(n.nodeValue.trim()&&!/^(SCRIPT|STYLE)$/.test(p.tagName)&&!p.closest('svg'))TX.push([n,n.nodeValue])}
+  ['aria-label','alt','title','data-label'].forEach(function(k){
+    document.querySelectorAll('['+k+']').forEach(function(e){AT.push([e,k,e.getAttribute(k)])})});
+  var d0=document.title,m0=document.querySelector('meta[name=description]'),md0=m0&&m0.content;
+  function t(s,l){return l==='es'?s:(X[l][s]||s)}
+  function set(l){
+    TX.forEach(function(r){var s=r[1].trim();r[0].nodeValue=l==='es'?r[1]:r[1].replace(s,function(){return t(s,l)})});
+    AT.forEach(function(r){r[0].setAttribute(r[1],t(r[2],l))});
+    document.documentElement.lang=HL[l];window.HI=HI[l];
+    document.querySelectorAll('a[href*="api.whatsapp.com/send"][href*="Visit"],a[data-hello]').forEach(function(a){
+      a.dataset.hello=1;a.href='https://api.whatsapp.com/send?phone=5493548465150&text='+encodeURIComponent(HELLO[l])});
+    if(HEAD[l]){document.title=HEAD[l][0];if(m0)m0.content=HEAD[l][1]}else{document.title=d0;if(m0)m0.content=md0}
+    document.querySelectorAll('.lg button').forEach(function(b){b.setAttribute('aria-pressed',b.dataset.l===l)});
+    try{localStorage.setItem('lang',l)}catch(e){}
+    window.dispatchEvent(new Event('scroll'));
+  }
+  document.querySelectorAll('.lg button').forEach(function(b){b.addEventListener('click',function(){set(b.dataset.l)})});
+  var s0;try{s0=localStorage.getItem('lang')}catch(e){}
+  s0=s0||(navigator.language||'es').slice(0,2);
+  if(s0==='pt'||s0==='en')set(s0);
 })();
 </script>
 
