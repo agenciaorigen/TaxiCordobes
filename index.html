@@ -1,0 +1,919 @@
+<!doctype html>
+<!-- Cordobés Taxi Iguazú · versión 1.1 · 14/10/2026 -->
+<html lang="es-AR">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover">
+<title>Cordobés Taxi Iguazú | Taxi y traslados a Cataratas y aeropuertos</title>
+<meta name="description" content="Taxi y traslados privados y seguros en Puerto Iguazú: Cataratas, aeropuertos IGR e IGU, tours y compras en Paraguay. Disponible las 24 horas en hoteles.">
+<meta name="robots" content="index, follow, max-image-preview:large">
+<meta name="google-site-verification" content="5Q7ScCRHpk3f4yxCvvCL2EO1FcVPrD34Gssn6A1IUsY">
+<meta name="theme-color" content="#04130f">
+<link rel="canonical" href="https://cordobestaxiiguazu.com/">
+<link rel="icon" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 64 64'%3E%3Crect width='64' height='64' rx='14' fill='%23062016'/%3E%3Crect x='10' y='24' width='44' height='20' rx='5' fill='%23ffc21a'/%3E%3Crect x='24' y='14' width='16' height='10' rx='3' fill='%23ffc21a'/%3E%3C/svg%3E">
+<meta property="og:type" content="website">
+<meta property="og:locale" content="es_AR">
+<meta property="og:site_name" content="Cordobés Taxi Iguazú">
+<meta property="og:title" content="Cordobés Taxi Iguazú | Tu taxi en Puerto Iguazú">
+<meta property="og:description" content="Traslados privados y seguros a Cataratas, aeropuertos y más. Las 24 horas en hoteles.">
+<meta property="og:url" content="https://cordobestaxiiguazu.com/">
+<meta name="twitter:card" content="summary">
+<script type="application/ld+json">{"@context":"https://schema.org","@type":"TaxiService","name":"Cordobés Taxi Iguazú","url":"https://cordobestaxiiguazu.com/","telephone":["+54 9 3548 465150","+54 3757 423747"],"description":"Taxi y traslados privados y seguros en Puerto Iguazú: Cataratas, aeropuertos IGR e IGU, tours y compras en Paraguay.","address":{"@type":"PostalAddress","streetAddress":"Gervasio Artigas 359, Villa Alta","addressLocality":"Puerto Iguazú","addressRegion":"Misiones","addressCountry":"AR"},"areaServed":["Puerto Iguazú","Foz do Iguaçu","Ciudad del Este"],"openingHours":"Mo-Su 00:00-23:59","sameAs":["https://www.instagram.com/alejandrolazarobarrionuevo/","https://youtu.be/-_lpvTzhtJ0"]}</script>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Barlow+Condensed:wght@600;800&family=Instrument+Sans:wght@400;500;600&family=JetBrains+Mono:wght@500&display=swap">
+<style>
+/* Concepto: la página es un viaje nocturno en taxi hacia las Cataratas. El scroll es el pedal.
+   Un camino en perspectiva (canvas) avanza al bajar, el cielo pasa de atardecer a noche a alba de niebla,
+   y cada sección es un cartel verde de ruta, un cartel publicitario que pasa por la ventanilla o un ticket de taxi. */
+:root{
+  --night:#04130f; --glass:#04130fcc; --sign:#0d6b3d; --taxi:#ffc21a;
+  --ink:#f1f7f3; --mute:#b6cbc1; --agua:#8ff0df; --line:#ffffff26;
+  --f-d:'Barlow Condensed','Arial Narrow',sans-serif;
+  --f-b:'Instrument Sans',system-ui,sans-serif;
+  --f-m:'JetBrains Mono',ui-monospace,monospace;
+  color-scheme:dark;
+}
+[hidden]{display:none!important}
+*{box-sizing:border-box}
+html{scroll-behavior:smooth;scroll-padding-top:84px}
+body{margin:0;background:var(--night);color:var(--ink);font:400 1.0625rem/1.65 var(--f-b);overflow-x:clip}
+p{margin:0}
+a{color:inherit}
+h1,h2,h3{font-family:var(--f-d);font-weight:800;text-transform:uppercase;line-height:.98;letter-spacing:.01em;margin:0;text-wrap:balance}
+:focus-visible{outline:3px solid var(--agua);outline-offset:3px;border-radius:6px}
+#road{position:fixed;inset:0;width:100%;height:100%;z-index:0;display:block}
+main,header,footer{position:relative;z-index:1}
+.w{max-width:1180px;margin-inline:auto;padding-left:max(16px,env(safe-area-inset-left,0px));padding-right:max(16px,env(safe-area-inset-right,0px))}
+.s{min-height:100svh;display:flex;align-items:center;padding-block:clamp(88px,14vh,150px)}
+.s>.w{width:100%}
+.skip{position:absolute;left:-999px;top:8px;background:var(--taxi);color:#1a1300;padding:10px 16px;border-radius:8px;z-index:100}
+.skip:focus{left:16px}
+
+/* carteles verdes de ruta */
+.sign,.gantry,.mini,.cartel{background:var(--sign);color:#fff;box-shadow:inset 0 0 0 4px var(--sign),inset 0 0 0 7px #fff,0 24px 50px #0007}
+.cartel{display:inline-block;border-radius:16px;padding:14px 28px;max-width:100%}
+.cartel h2{font-size:clamp(2.2rem,6.4vw,4.6rem)}
+.cartel small{display:block;font:600 .82rem var(--f-m);letter-spacing:.14em;text-transform:uppercase;color:#c9f3d8;margin-bottom:6px}
+.gl{background:var(--glass);backdrop-filter:blur(12px);-webkit-backdrop-filter:blur(12px);border:1px solid var(--line);border-radius:24px;padding:clamp(22px,3.4vw,40px)}
+.gl p+p{margin-top:16px}
+.gl p{color:#dcebe3}
+.lead{color:#dcebe3;max-width:60ch;margin-top:22px;text-shadow:0 1px 12px #000}
+
+.btn{display:inline-flex;align-items:center;gap:.6rem;min-height:48px;padding:.85rem 1.5rem;border-radius:999px;font:600 1rem var(--f-b);text-decoration:none;border:1px solid transparent;cursor:pointer;transition:transform .25s,box-shadow .25s}
+.btn:hover{transform:translateY(-3px)}
+.btn.p{background:var(--taxi);color:#1a1300;box-shadow:0 10px 30px #ffc21a40}
+.btn.g{background:#04130fb3;border-color:var(--line);color:var(--ink)}
+.btn svg{width:20px;height:20px;flex:none}
+
+/* header */
+.hd{position:sticky;top:env(safe-area-inset-top,0px);z-index:60;background:#04130fcc;backdrop-filter:blur(14px);-webkit-backdrop-filter:blur(14px);border-bottom:1px solid var(--line)}
+.hd .w{display:flex;align-items:center;justify-content:space-between;gap:16px;min-height:64px}
+.brand{display:flex;align-items:center;gap:12px;text-decoration:none;font:800 1.35rem var(--f-d);text-transform:uppercase;letter-spacing:.03em}
+.lamp{background:var(--taxi);color:#1a1300;font:800 .78rem var(--f-d);letter-spacing:.14em;padding:5px 10px;border-radius:7px;box-shadow:0 0 20px #ffc21acc}
+.nav{display:flex;gap:4px}
+.nav a{text-decoration:none;padding:10px 12px;border-radius:999px;color:var(--mute);font-weight:500;font-size:.95rem}
+.nav a:hover{color:var(--ink);background:#ffffff14}
+.menu{display:none;background:none;border:1px solid var(--line);color:var(--ink);border-radius:12px;min-width:48px;min-height:48px;cursor:pointer;place-items:center}
+@media(max-width:860px){
+  .menu{display:grid}
+  .nav{position:absolute;left:0;right:0;top:100%;flex-direction:column;background:#04130ff5;padding:10px max(16px,env(safe-area-inset-left,0px));border-bottom:1px solid var(--line);display:none}
+  .nav.open{display:flex}
+  .nav a{padding:14px}
+}
+
+/* HUD de viaje */
+.hud{position:fixed;left:0;right:0;bottom:0;z-index:65;display:flex;align-items:end;justify-content:space-between;gap:12px;padding-top:12px;padding-bottom:calc(14px + env(safe-area-inset-bottom,0px));padding-left:max(16px,env(safe-area-inset-left,0px));padding-right:max(16px,env(safe-area-inset-right,0px));pointer-events:none}
+.hud>*{pointer-events:auto}
+.odo{background:#04130fe6;border:1px solid var(--line);border-radius:14px;padding:8px 14px;font:500 .82rem var(--f-m);line-height:1.35;color:var(--mute);min-width:0}
+.odo b{display:block;font-size:1.25rem;color:var(--taxi);font-variant-numeric:tabular-nums;letter-spacing:.06em}
+.odo span{display:block;overflow:hidden;text-overflow:ellipsis;white-space:nowrap;max-width:46vw}
+.bar{position:fixed;top:env(safe-area-inset-top,0px);left:0;right:0;height:3px;background:var(--taxi);transform-origin:left;transform:scaleX(var(--prog,0));z-index:70}
+
+/* hero */
+.gantry{display:inline-block;border-radius:22px;padding:clamp(20px,3.4vw,40px) clamp(24px,4.4vw,56px);max-width:100%}
+.gantry h1{font-size:clamp(2.6rem,9vw,6.6rem);line-height:.92}
+.gantry h1 em{font-style:normal;color:var(--taxi)}
+.subs{display:flex;flex-wrap:wrap;gap:10px;margin-top:18px}
+.mini{border-radius:12px;padding:8px 16px;font:600 1.1rem var(--f-d);text-transform:uppercase;letter-spacing:.05em;box-shadow:inset 0 0 0 3px var(--sign),inset 0 0 0 5px #fff,0 12px 24px #0006}
+.hero .lead{font-size:1.15rem}
+.acts{display:flex;flex-wrap:wrap;gap:12px;margin-top:28px}
+.tels{margin-top:20px;display:flex;flex-wrap:wrap;gap:6px 22px;font-size:.95rem;color:var(--mute);text-shadow:0 1px 10px #000}
+.tels b{color:var(--ink);font-weight:600;user-select:all}
+.scr{margin-top:34px;font:500 .8rem var(--f-m);letter-spacing:.14em;text-transform:uppercase;color:var(--taxi);text-shadow:0 1px 10px #000}
+
+/* nosotros */
+.nos{display:grid;grid-template-columns:1.25fr 1fr;gap:clamp(20px,4vw,48px);margin-top:30px;align-items:start}
+.mojones{display:grid;grid-template-columns:1fr 1fr;gap:14px}
+.mj{background:#eef3f0;color:#0b1a15;border-radius:46px 46px 10px 10px;padding:26px 14px 16px;text-align:center;border-bottom:8px solid #c9231b}
+.mj b{display:block;font:800 clamp(2.2rem,5vw,3.4rem) var(--f-d);line-height:1;font-variant-numeric:tabular-nums}
+.mj span{font-size:.88rem;line-height:1.3;display:block;margin-top:6px}
+@media(max-width:820px){.nos{grid-template-columns:1fr}}
+
+/* servicios: carteles que pasan por la ventanilla */
+.bbs{display:grid;gap:clamp(70px,14vh,150px);margin-top:50px}
+.bb{position:relative;max-width:560px;width:100%;padding:clamp(22px,3vw,34px);border:3px solid var(--taxi);border-radius:18px;background:linear-gradient(160deg,#10231e,#06130f);box-shadow:0 0 0 8px #0006,0 0 70px #ffc21a26}
+.bb:nth-child(odd){justify-self:start;--s:-1}
+.bb:nth-child(even){justify-self:end;--s:1}
+.bb::after{content:"";position:absolute;left:16%;right:16%;top:100%;height:70px;background:linear-gradient(90deg,#2b3330 0 7%,transparent 7% 93%,#2b3330 93%)}
+.bb h3{font-size:clamp(1.9rem,4vw,2.7rem);color:var(--taxi);display:flex;gap:14px;align-items:center}
+.bb h3 svg{width:46px;height:46px;flex:none}
+.bb p{margin-top:12px;color:#dcebe3}
+.bb .tag{display:inline-block;margin-top:16px;font:500 .78rem var(--f-m);letter-spacing:.14em;text-transform:uppercase;color:var(--agua)}
+
+/* destino a elegir */
+.pick{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:14px;margin-top:34px}
+.sb{display:flex;flex-direction:column;align-items:center;gap:6px;padding:22px 12px;border-radius:16px;border:0;cursor:pointer;color:#fff;background:var(--sign);box-shadow:inset 0 0 0 4px var(--sign),inset 0 0 0 7px #fff55f,0 16px 30px #0007;font:800 clamp(1.3rem,3.4vw,2rem) var(--f-d);text-transform:uppercase;letter-spacing:.04em;transition:transform .25s,box-shadow .25s}
+.sb svg{width:40px;height:40px}
+.sb:hover{transform:translateY(-4px)}
+.sb[aria-pressed="true"]{box-shadow:inset 0 0 0 4px var(--sign),inset 0 0 0 7px #fff,0 0 0 4px var(--taxi),0 0 40px #ffc21a88}
+.sb small{font:500 .72rem var(--f-m);letter-spacing:.1em;color:#c9f3d8}
+.cp{margin-top:18px;min-height:150px}
+.cp h3{font-size:1.9rem;color:var(--taxi)}
+.chips{display:flex;flex-wrap:wrap;gap:8px;margin:16px 0 0;padding:0;list-style:none}
+.chips li{padding:8px 14px;border-radius:999px;border:1px solid var(--line);background:#ffffff0f}
+
+/* destinos */
+.dg{display:grid;grid-template-columns:repeat(auto-fill,minmax(min(100%,300px),1fr));gap:16px;margin-top:34px}
+.dd{background:var(--glass);border:1px solid var(--line);border-radius:20px;padding:22px;transition:transform .3s,border-color .3s}
+.dd:hover{transform:translateY(-6px) rotate(-.6deg);border-color:var(--taxi)}
+.dd small{font:500 .74rem var(--f-m);letter-spacing:.12em;text-transform:uppercase;color:var(--agua)}
+.dd h3{font-size:1.5rem;margin:6px 0 8px;line-height:1}
+.dd p{color:#d0e2d9;font-size:.96rem}
+.dgl{margin-top:36px;font:800 1.2rem var(--f-d);text-transform:uppercase;letter-spacing:.06em;color:var(--taxi)}
+
+/* ventajas: tipografía que pasa */
+.vts{display:grid;gap:clamp(44px,9vh,90px);margin-top:44px}
+.vt .big{font:800 clamp(3.4rem,15.5vw,11rem)/.84 var(--f-d);text-transform:uppercase;color:transparent;-webkit-text-stroke:2px var(--ink);transition:color .5s}
+.vt:hover .big{color:var(--taxi);-webkit-text-stroke-color:var(--taxi)}
+.vt p{max-width:58ch;margin-top:14px;color:#dcebe3;background:var(--glass);padding:16px 20px;border-radius:16px;border-left:5px solid var(--taxi)}
+
+/* video */
+.vid{display:flex;align-items:center;justify-content:space-between;gap:24px;flex-wrap:wrap}
+.play{width:112px;height:112px;border-radius:50%;background:var(--taxi);color:#1a1300;display:grid;place-items:center;text-decoration:none;box-shadow:0 0 0 12px #ffc21a30,0 0 0 30px #ffc21a14;transition:transform .3s}
+.play:hover{transform:scale(1.1) rotate(8deg)}
+.play svg{width:42px;height:42px;margin-left:5px}
+
+/* postales */
+.gal{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:clamp(18px,3vw,34px);margin-top:44px}
+.pc{margin:0;background:#f1f4f2;color:#0b1a15;padding:10px 10px 0;border-radius:6px;transform:rotate(var(--r));box-shadow:0 24px 46px #0008;transition:transform .4s}
+.pc:hover{transform:rotate(0) scale(1.04)}
+.pc div{aspect-ratio:4/4.4;background:var(--bgi);border-radius:3px}
+.pc figcaption{font:800 1.35rem var(--f-d);text-transform:uppercase;padding:12px 4px 14px}
+@media(max-width:720px){.gal{grid-template-columns:1fr 1fr}}
+
+/* tickets */
+.rh{display:flex;flex-wrap:wrap;align-items:end;justify-content:space-between;gap:20px}
+.rn{display:flex;gap:10px}
+.rn button{width:48px;height:48px;border-radius:50%;border:1px solid var(--line);background:#04130fcc;color:var(--ink);cursor:pointer;font-size:1.2rem}
+.rn button:hover{background:var(--taxi);color:#1a1300}
+.score{display:flex;align-items:center;gap:14px;margin-top:26px}
+.score b{font:800 4rem var(--f-d);line-height:1;color:var(--taxi)}
+.score span{display:block;color:var(--mute);font-size:.92rem}
+.stars{display:flex;gap:3px;color:var(--taxi)}
+.stars svg{width:20px;height:20px}
+.rev{display:flex;gap:20px;overflow-x:auto;scroll-snap-type:x mandatory;padding:8px 0 30px;margin-top:26px;scrollbar-color:var(--taxi) transparent}
+.tk{flex:0 0 min(84vw,330px);scroll-snap-align:start;background:#eef3f0;color:#10231e;font:500 .9rem/1.55 var(--f-m);padding:24px 22px 34px;-webkit-mask:conic-gradient(from -45deg at bottom,#0000,#000 1deg 89deg,#0000 90deg) 50%/18px 100%;mask:conic-gradient(from -45deg at bottom,#0000,#000 1deg 89deg,#0000 90deg) 50%/18px 100%;display:flex;flex-direction:column;gap:14px;margin:0}
+.tk header{display:flex;justify-content:space-between;border-bottom:2px dashed #10231e55;padding-bottom:10px;font-size:.78rem;letter-spacing:.08em;text-transform:uppercase}
+.tk p{font-family:var(--f-b);font-size:1rem;line-height:1.5}
+.tk footer{border-top:2px dashed #10231e55;padding-top:10px;font-size:.8rem;letter-spacing:.06em;text-transform:uppercase}
+.tk footer b{display:block;font-size:1rem}
+
+/* contacto */
+.ct{display:grid;grid-template-columns:1fr 1.1fr;gap:clamp(24px,5vw,64px);margin-top:34px;align-items:start}
+.ct dl{margin:0;display:grid;gap:20px}
+.ct dt{font:500 .76rem var(--f-m);letter-spacing:.14em;text-transform:uppercase;color:var(--taxi)}
+.ct dd{margin:4px 0 0;font-size:1.15rem}
+.ct dd a{text-decoration:none;border-bottom:1px solid var(--line)}
+.soc{display:flex;gap:10px;flex-wrap:wrap}
+form{display:grid;gap:16px}
+label{display:grid;gap:6px;font-weight:600;font-size:.95rem}
+input,textarea{font:inherit;color:var(--ink);background:#04130f;border:1px solid #ffffff40;border-radius:14px;padding:14px 16px;min-height:52px;width:100%}
+input:focus,textarea:focus{outline:3px solid var(--agua);outline-offset:2px;border-color:transparent}
+textarea{min-height:130px;resize:vertical}
+input:user-invalid,textarea:user-invalid{border-color:#ff8a7a}
+.cnt{justify-self:end;color:var(--mute);font:400 .82rem var(--f-m)}
+.out{padding:16px;border-radius:16px;background:#ffc21a1f;border:1px solid #ffc21a77}
+@media(max-width:820px){.ct{grid-template-columns:1fr}}
+
+/* pie */
+.ft{padding-block:60px 120px;background:#04130ff2;border-top:1px solid var(--line)}
+.ft q{display:block;font:800 clamp(1.7rem,4vw,2.8rem)/1.05 var(--f-d);text-transform:uppercase;max-width:24ch;quotes:none;text-wrap:balance}
+.fg{display:grid;grid-template-columns:2fr 1fr 1fr;gap:32px;margin-top:40px}
+.ft h2{font:500 .76rem var(--f-m);letter-spacing:.14em;color:var(--taxi);margin-bottom:12px}
+.ft ul{list-style:none;margin:0;padding:0;display:grid;gap:8px;color:var(--mute)}
+.ft a{text-decoration:none}
+.ft a:hover{color:var(--ink)}
+.cr{margin-top:34px;color:var(--mute);font-size:.88rem}
+@media(max-width:720px){.fg{grid-template-columns:1fr}}
+
+.gap{height:100svh;pointer-events:none}
+.pc div{position:relative;overflow:hidden}
+.pc img{position:absolute;inset:0;width:100%;height:100%;object-fit:cover;display:block}
+/* movimiento */
+@media(prefers-reduced-motion:no-preference){
+  @keyframes up{from{opacity:0;transform:translateY(30px)}to{opacity:1;transform:none}}
+  @keyframes glow{50%{box-shadow:0 0 6px #ffc21a66}}
+  .in{animation:up .9s cubic-bezier(.2,.7,.2,1) both;animation-delay:calc(var(--d,0) * 120ms)}
+  .lamp{animation:glow 2.4s ease-in-out infinite}
+  @supports (animation-timeline:view()){
+    @keyframes pass{0%{opacity:0;transform:translateX(calc(var(--s) * -10%)) scale(.5)}30%{opacity:1;transform:none}70%{opacity:1;transform:none}100%{opacity:0;transform:translateX(calc(var(--s) * 28%)) scale(1.4)}}
+    @keyframes rise{from{opacity:0;transform:translateY(46px)}to{opacity:1;transform:none}}
+    @keyframes zoom{from{opacity:0;letter-spacing:.34em;transform:scale(.7)}to{opacity:1;letter-spacing:.01em;transform:none}}
+    .bb{animation:pass linear both;animation-timeline:view();animation-range:cover 0% cover 100%}
+    .rv{animation:rise linear both;animation-timeline:view();animation-range:entry 4% cover 28%}
+    .vt .big{animation:zoom linear both;animation-timeline:view();animation-range:entry 0% cover 45%;transform-origin:left center}
+  }
+}
+@media(prefers-reduced-motion:reduce){html{scroll-behavior:auto}}
+</style>
+</head>
+<body>
+<canvas id="road" aria-hidden="true"></canvas>
+<div class="bar" aria-hidden="true"></div>
+<a class="skip" href="#main">Saltar al contenido</a>
+
+<header class="hd">
+  <div class="w">
+    <a class="brand" href="#inicio" aria-label="Cordobés Taxi Iguazú, inicio"><span class="lamp">TAXI</span>Cordobés Iguazú</a>
+    <button class="menu" aria-expanded="false" aria-controls="nav" aria-label="Abrir menú"><svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" aria-hidden="true"><path d="M4 7h16M4 12h16M4 17h16"/></svg></button>
+    <nav class="nav" id="nav" aria-label="Principal">
+      <a href="#nosotros">Nosotros</a><a href="#servicios">Servicios</a><a href="#destinos">Destinos</a><a href="#galeria">Galería</a><a href="#resenas">Reseñas</a><a href="#contacto">Contacto</a>
+    </nav>
+  </div>
+</header>
+
+<main id="main">
+<!-- SALIDA -->
+<section class="s hero" id="inicio" data-label="Puerto Iguazú · salida" aria-labelledby="h1">
+  <div class="w">
+    <div class="gantry in" style="--d:0"><h1 id="h1">Tu taxi en <em>Puerto Iguazú</em></h1></div>
+    <div class="subs in" style="--d:1" aria-hidden="true"><span class="mini">↑ Cataratas del Iguazú</span><span class="mini">↗ Foz do Iguaçu</span><span class="mini">↖ Ciudad del Este</span></div>
+    <p class="lead in" style="--d:2">Cordobés Taxi y traslados privados y seguros a Cataratas, aeropuerto y más.</p>
+    <div class="acts in" style="--d:3">
+      <a class="btn p" href="https://api.whatsapp.com/send?phone=5493548465150&text=Hola.%20Visit%C3%A9%20su%20sitio%20web%20y%20me%20gustar%C3%ADa%20obtener%20m%C3%A1s%20informaci%C3%B3n%20sobre%20sus%20servicios." target="_blank" rel="noopener">
+        <svg viewBox="0 0 24 24" fill="currentColor" aria-hidden="true"><path d="M12 2a10 10 0 00-8.5 15.2L2 22l4.9-1.4A10 10 0 1012 2zm5.2 13.9c-.2.6-1.3 1.2-1.8 1.2-.5.1-1 .2-3.3-.7a11 11 0 01-4.7-4.1c-.4-.5-1.1-1.5-1.1-2.8s.7-2 1-2.3c.2-.3.5-.3.7-.3h.5c.2 0 .4 0 .6.5l.8 2c.1.2.1.4 0 .5l-.4.6c-.1.2-.3.3-.1.6a6.5 6.5 0 003 2.6c.3.1.5.1.6-.1l.8-1c.2-.2.4-.2.6-.1l1.9.9c.3.1.5.2.5.3 0 .1 0 .6-.2 1.1z"/></svg>
+        Reservar por WhatsApp</a>
+      <a class="btn g" href="#nosotros">Arrancar el viaje ↓</a>
+    </div>
+    <p class="tels in" style="--d:4"><span>WhatsApp <b>+54 9 3548 46-5150</b></span><span>Teléfono <b>+54 3757-423747</b></span></p>
+    <p class="scr in" style="--d:5">Baja para manejar</p>
+  </div>
+</section>
+
+<!-- NOSOTROS -->
+<section class="s" id="nosotros" data-label="Ruta 12 · nosotros" aria-labelledby="h-nos">
+  <div class="w">
+    <div class="cartel rv"><small>Nosotros</small><h2 id="h-nos">Más que un viaje, una experiencia confiable</h2></div>
+    <div class="nos">
+      <div class="gl rv">
+        <p>En Cordobés Taxi y Traslados somos más que un simple servicio de transporte: somos tus anfitriones en una de las maravillas naturales más impresionantes del mundo. Con años de experiencia y un profundo conocimiento de la región, nuestro equipo de conductores profesionales se dedica a ofrecerte un servicio seguro, puntual y personalizado.</p>
+        <p>Nos enorgullece ser tu conexión con los lugares más emblemáticos de la triple frontera, desde las majestuosas Cataratas del Iguazú hasta los vibrantes centros de compras en Paraguay y Brasil. Nuestra flota está pensada para tu comodidad y seguridad, para que cada viaje sea placentero y memorable. Con nosotros no solo llegas a tu destino: lo haces con la confianza que solo un servicio local y dedicado puede darte.</p>
+        <p><a href="#galeria" style="color:var(--taxi)">Explora nuestra galería de fotos</a></p>
+      </div>
+      <div class="mojones rv">
+        <div class="mj"><b data-count="5" data-dec="1">5.0</b><span>Valoración en Google</span></div>
+        <div class="mj"><b data-count="32">32</b><span>Reseñas de clientes</span></div>
+        <div class="mj"><b data-count="24">24</b><span>Horas, en hoteles</span></div>
+        <div class="mj"><b data-count="3">3</b><span>Países: AR, BR y PY</span></div>
+      </div>
+    </div>
+  </div>
+</section>
+<div class="gap" data-lm="aripuca" aria-hidden="true"></div>
+
+<!-- SERVICIOS -->
+<section class="s" id="servicios" data-label="Servicios destacados" aria-labelledby="h-serv" style="align-items:flex-start">
+  <div class="w">
+    <div class="cartel rv"><small>Servicios destacados</small><h2 id="h-serv">Servicio de excelencia y atención a cada detalle</h2></div>
+    <p class="lead rv">Puntualidad, seguridad y comodidad en Argentina, Brasil y Paraguay. Cada servicio pasa por tu ventanilla.</p>
+    <div class="bbs">
+      <article class="bb">
+        <h3><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.4" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M22 2 11 13M22 2l-7 20-4-9-9-4 20-7z"/></svg>Traslados desde y hacia los aeropuertos</h3>
+        <p>Viaja sin preocupaciones desde y hacia los aeropuertos de Foz de Iguazú (IGU) y Puerto Iguazú (IGR). Un traslado confiable y a tiempo a tu hotel o a cualquier otro destino en la ciudad.</p>
+        <span class="tag">Aeropuertos IGR · IGU</span>
+      </article>
+      <article class="bb">
+        <h3><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.4" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M12 22s7-6.2 7-12a7 7 0 10-14 0c0 5.8 7 12 7 12z"/><circle cx="12" cy="10" r="2.5"/></svg>Tours turísticos a medida en Iguazú</h3>
+        <p>Explora las maravillas de la región con total comodidad. Tours privados a los principales puntos turísticos, como las Cataratas del Iguazú y el Parque das Aves, adaptados a tus horarios y preferencias para una experiencia inolvidable.</p>
+        <span class="tag">Cataratas · Parque das Aves</span>
+      </article>
+      <article class="bb">
+        <h3><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.4" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><circle cx="12" cy="12" r="10"/><path d="M12 6v6l4 2"/></svg>Taxi 24 horas en hoteles</h3>
+        <p>Estamos a tu disposición en cualquier momento. Solicita tu taxi a cualquier hora del día o de la noche para traslados desde tu hotel, con movilidad y seguridad para cualquier compromiso o paseo nocturno.</p>
+        <span class="tag">Las 24 horas</span>
+      </article>
+      <article class="bb">
+        <h3><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.4" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M6 8h12l1 13H5L6 8z"/><path d="M9 8a3 3 0 016 0"/></svg>Compras en Paraguay sin estrés</h3>
+        <p>Disfruta de un tour de compras seguro y tranquilo. El servicio a Ciudad del Este te permite aprovechar al máximo tu tiempo para encontrar las mejores ofertas y productos, con la tranquilidad de un viaje sin complicaciones.</p>
+        <span class="tag">Ciudad del Este</span>
+      </article>
+    </div>
+  </div>
+</section>
+<div class="gap" data-lm="cascada1" aria-hidden="true"></div>
+
+<!-- ELEGÍ TU DESTINO -->
+<section class="s" id="ruta" data-label="Triple Frontera · bifurcación" aria-labelledby="h-ruta">
+  <div class="w">
+    <div class="cartel rv"><small>Servicios de taxi en la Triple Frontera</small><h2 id="h-ruta">Un solo taxi, tres países. Elige a dónde doblar</h2></div>
+    <p class="lead rv">Nuestra flota te lleva a cualquier punto de interés de la región, en Argentina o en Brasil, y también a los sitios menos conocidos que muestran la verdadera esencia de la triple frontera. Toca un cartel y mira cómo gira el camino.</p>
+    <div class="pick rv" role="group" aria-label="Elegir país">
+      <button class="sb" type="button" data-st="-1" data-p="pn-py" aria-pressed="false"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M19 12H5M11 6l-6 6 6 6"/></svg>Paraguay<small>Ciudad del Este</small></button>
+      <button class="sb" type="button" data-st="0" data-p="pn-ar" aria-pressed="true"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M12 19V5M6 11l6-6 6 6"/></svg>Argentina<small>Puerto Iguazú</small></button>
+      <button class="sb" type="button" data-st="1" data-p="pn-br" aria-pressed="false"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M5 12h14M13 6l6 6-6 6"/></svg>Brasil<small>Foz do Iguaçu</small></button>
+    </div>
+    <div class="gl cp" aria-live="polite">
+      <div id="pn-ar"><h3>Otros destinos en Argentina</h3><ul class="chips"><li>Parque Nacional Iguazú (lado argentino)</li><li>Biocentro Iguazú</li><li>Güira Oga</li><li>Casa de las Botellas</li><li>Orquideario del Indio Solitario</li><li>La Feirinha (Mercado Municipal de Puerto Iguazú)</li></ul></div>
+      <div id="pn-br" hidden><h3>Otros destinos en Brasil</h3><ul class="chips"><li>Parque Nacional do Iguaçu (lado brasileño)</li><li>Usina Hidrelétrica de Itaipu (lado brasileño)</li><li>Marco das Três Fronteiras (lado brasileño)</li><li>Dreams Park Show: Museo de Cera, Maravillas del Mundo, Valle de los Dinosaurios</li></ul></div>
+      <div id="pn-py" hidden><h3>Otros destinos en Paraguay</h3><ul class="chips"><li>Lago de la República</li><li>Museo de la Tierra Guaraní</li><li>Shopping Paris</li><li>Shopping Monalisa</li><li>Aventura Extrema (tirolesa y senderismo)</li></ul></div>
+    </div>
+  </div>
+</section>
+<div class="gap" data-lm="hito" aria-hidden="true"></div>
+
+<!-- DESTINOS -->
+<section class="s" id="destinos" data-label="Destinos · Misiones" aria-labelledby="h-dest" style="align-items:flex-start">
+  <div class="w">
+    <div class="cartel rv"><small>Servicios de traslado y turismo en Misiones</small><h2 id="h-dest">Destinos en Puerto Iguazú y alrededores</h2></div>
+    <div class="dg">
+      <article class="dd rv"><small>Puerto Iguazú</small><h3>Cataratas del Iguazú</h3><p>Lado argentino y brasileño. El principal punto turístico, con circuitos de senderos y paseos en lancha.</p></article>
+      <article class="dd rv"><small>Brasil</small><h3>Parque das Aves</h3><p>Lado brasileño. Aviario en plena selva, a pocos minutos de las Cataratas.</p></article>
+      <article class="dd rv"><small>Puerto Iguazú</small><h3>Hito de las Tres Fronteras</h3><p>Mirador a la confluencia de los ríos Iguazú y Paraná, donde se encuentran Brasil, Argentina y Paraguay.</p></article>
+      <article class="dd rv"><small>Puerto Iguazú</small><h3>La Aripuca</h3><p>Una atracción que rinde homenaje a la cultura local y a la importancia del bosque.</p></article>
+      <article class="dd rv"><small>Puerto Iguazú</small><h3>Jardín de los Picaflores</h3><p>Un lugar para observar de cerca diversas especies de colibríes.</p></article>
+      <article class="dd rv"><small>Puerto Iguazú</small><h3>Güira Oga</h3><p>Centro de rehabilitación y conservación de la fauna silvestre.</p></article>
+      <article class="dd rv"><small>Misiones</small><h3>Ruinas de San Ignacio</h3><p>Una de las misiones jesuíticas mejor conservadas de Argentina, Patrimonio Mundial de la UNESCO.</p></article>
+      <article class="dd rv"><small>Misiones</small><h3>Minas de Wanda</h3><p>Donde puedes ver y comprar piedras semipreciosas, como amatistas y ágatas.</p></article>
+      <article class="dd rv"><small>Misiones</small><h3>Salto del Moconá</h3><p>Una impresionante cascada que forma una falla en el río Uruguay.</p></article>
+      <article class="dd rv"><small>Ciudad del Este</small><h3>Tours de compras</h3><p>Grandes centros comerciales con una enorme variedad de productos, desde electrónicos hasta perfumes.</p></article>
+      <article class="dd rv"><small>Ciudad del Este</small><h3>Salto Monday</h3><p>Una hermosa cascada a pocos kilómetros del centro de la ciudad.</p></article>
+    </div>
+  </div>
+</section>
+<div class="gap" data-lm="aves" aria-hidden="true"></div>
+
+<!-- VENTAJAS -->
+<section class="s" id="ventajas" data-label="Ventajas" aria-labelledby="h-vent" style="align-items:flex-start">
+  <div class="w">
+    <div class="cartel rv"><small>Ventajas</small><h2 id="h-vent">¿Por qué contratar nuestro servicio?</h2></div>
+    <p class="lead rv">Conocemos cada rincón de la región y te llevamos no solo a los sitios más famosos, sino también a lugares menos conocidos que te permiten descubrir la verdadera esencia de la triple frontera.</p>
+    <div class="vts">
+      <div class="vt"><div class="big" aria-hidden="true">Seguridad</div><h3 style="font-size:1.6rem;margin-top:8px">Seguridad y profesionalismo</h3><p>Conductores profesionales, experimentados y calificados, con un profundo conocimiento de la triple frontera. Priorizamos tu <strong>seguridad</strong> por encima de todo, en vehículos modernos, con mantenimiento regular y equipados para el máximo confort.</p></div>
+      <div class="vt"><div class="big" aria-hidden="true">Puntualidad</div><h3 style="font-size:1.6rem;margin-top:8px">Puntualidad y flexibilidad</h3><p>Ya sea un traslado al aeropuerto, un paseo turístico o un viaje de compras, la <strong>puntualidad</strong> es nuestra prioridad. Un servicio a la medida de tu horario, sin esperas innecesarias, para aprovechar al máximo tu tiempo en Iguazú.</p></div>
+      <div class="vt"><div class="big" aria-hidden="true">Confianza</div><h3 style="font-size:1.6rem;margin-top:8px">Atención personalizada y confiable</h3><p>Somos más que un servicio de taxi: somos tus guías en la región. Atención humanizada y transparente, siempre disponibles para responder tus preguntas y recomendarte los mejores lugares, para que tu experiencia sea <strong>inolvidable</strong>.</p></div>
+    </div>
+    <p class="rv" style="margin-top:44px"><a class="btn p" href="https://wa.me/5493548465150" target="_blank" rel="noopener">Reserva ya tu taxi o traslado por WhatsApp</a></p>
+  </div>
+</section>
+<div class="gap" data-lm="cascada2" aria-hidden="true"></div>
+
+<!-- VIDEO -->
+<section class="s" data-label="Video" aria-labelledby="h-vid" style="min-height:60svh">
+  <div class="w">
+    <div class="gl vid rv">
+      <div><p style="font:500 .78rem var(--f-m);letter-spacing:.14em;text-transform:uppercase;color:var(--taxi)">Video</p><h2 id="h-vid" style="font-size:clamp(2rem,5vw,3.4rem);margin-top:8px">Descubre las maravillas de Iguazú</h2><p style="margin-top:12px">Mira el video de Cordobés Taxi Iguazú en YouTube.</p></div>
+      <a class="play" href="https://youtu.be/-_lpvTzhtJ0" target="_blank" rel="noopener" aria-label="Mirar el video en YouTube (se abre en una pestaña nueva)"><svg viewBox="0 0 24 24" fill="currentColor" aria-hidden="true"><path d="M7 4v16l14-8z"/></svg></a>
+    </div>
+  </div>
+</section>
+
+<!-- GALERÍA -->
+<section class="s" id="galeria" data-label="Galería de postales" aria-labelledby="h-gal" style="align-items:flex-start">
+  <div class="w">
+    <div class="cartel rv"><small>Galería de fotos</small><h2 id="h-gal">Captura la esencia de tu próxima aventura en Iguazú</h2></div>
+    <!-- Fotos reales: poner los archivos en la carpeta img/ con estos nombres. Si falta alguno, se ve la postal pintada. -->
+    <div class="gal">
+      <figure class="pc rv" style="--r:-3deg;--bgi:radial-gradient(circle at 70% 20%,#e9fffa 0,#7fe3d3 18%,transparent 40%),linear-gradient(160deg,#0f5a4d,#06201c)"><div><img src="img/cataratas-iguazu.jpg" alt="Cataratas del Iguazú" loading="lazy" onerror="this.remove()"></div><figcaption>Cataratas del Iguazú</figcaption></figure>
+      <figure class="pc rv" style="--r:2.5deg;--bgi:radial-gradient(circle at 30% 70%,#ffc21a 0,transparent 35%),linear-gradient(140deg,#1d6b3a,#0a2d27)"><div><img src="img/parque-das-aves.jpg" alt="Parque das Aves" loading="lazy" onerror="this.remove()"></div><figcaption>Parque das Aves</figcaption></figure>
+      <figure class="pc rv" style="--r:-1.5deg;--bgi:linear-gradient(160deg,#d2552b,#5c1f0e)"><div><img src="img/ruinas-san-ignacio.jpg" alt="Ruinas de San Ignacio" loading="lazy" onerror="this.remove()"></div><figcaption>Ruinas de San Ignacio</figcaption></figure>
+      <figure class="pc rv" style="--r:3deg;--bgi:radial-gradient(circle at 60% 40%,#c9a4f5 0,#7a4cc0 30%,#2c1750)"><div><img src="img/minas-de-wanda.jpg" alt="Minas de Wanda" loading="lazy" onerror="this.remove()"></div><figcaption>Minas de Wanda</figcaption></figure>
+      <figure class="pc rv" style="--r:-2.5deg;--bgi:linear-gradient(200deg,#ffc21a,#d2552b 45%,#0b4137)"><div><img src="img/atardecer-cataratas.jpg" alt="Atardecer en las Cataratas" loading="lazy" onerror="this.remove()"></div><figcaption>Atardecer en las Cataratas</figcaption></figure>
+      <figure class="pc rv" style="--r:1.5deg;--bgi:linear-gradient(170deg,#1c7a5a,#e9d36a 70%,#7a3a1c)"><div><img src="img/paraguay.jpg" alt="Paraguay" loading="lazy" onerror="this.remove()"></div><figcaption>Paraguay</figcaption></figure>
+    </div>
+  </div>
+</section>
+<div class="gap" data-lm="ruinas" aria-hidden="true"></div>
+
+<!-- RESEÑAS -->
+<section class="s" id="resenas" data-label="Tickets de pasajeros" aria-labelledby="h-res" style="align-items:flex-start">
+  <div class="w">
+    <div class="rh">
+      <div class="cartel rv"><small>Reseñas</small><h2 id="h-res">Lo que nuestros clientes dicen de su experiencia</h2></div>
+      <div class="rn" aria-label="Navegar reseñas"><button type="button" data-dir="-1" aria-label="Reseñas anteriores">←</button><button type="button" data-dir="1" aria-label="Reseñas siguientes">→</button></div>
+    </div>
+    <div class="score gl rv" style="width:fit-content;padding:16px 24px">
+      <b>5.0</b>
+      <div>
+        <div class="stars" aria-label="5 estrellas de 5"><svg viewBox="0 0 24 24" fill="currentColor"><path d="M12 2l3 7 7 .6-5.300 4.700 1.600 7.200L12 17.800 5.700 21.500l1.600-7.200L2 9.600 9 9z"/></svg><svg viewBox="0 0 24 24" fill="currentColor"><path d="M12 2l3 7 7 .6-5.300 4.700 1.600 7.200L12 17.800 5.700 21.500l1.600-7.200L2 9.600 9 9z"/></svg><svg viewBox="0 0 24 24" fill="currentColor"><path d="M12 2l3 7 7 .6-5.300 4.700 1.600 7.200L12 17.800 5.700 21.500l1.600-7.200L2 9.600 9 9z"/></svg><svg viewBox="0 0 24 24" fill="currentColor"><path d="M12 2l3 7 7 .6-5.300 4.700 1.600 7.200L12 17.800 5.700 21.500l1.600-7.200L2 9.600 9 9z"/></svg><svg viewBox="0 0 24 24" fill="currentColor"><path d="M12 2l3 7 7 .6-5.300 4.700 1.600 7.200L12 17.800 5.700 21.500l1.600-7.200L2 9.600 9 9z"/></svg></div>
+        <span>Basado en 32 reseñas de Google · <a href="https://search.google.com/local/reviews?placeid=ChIJr-8wgdST9pQRHp8YHnDk8Jo" target="_blank" rel="noopener" style="color:var(--agua)">Ver todas</a> · <a href="https://search.google.com/local/writereview?placeid=ChIJr-8wgdST9pQRHp8YHnDk8Jo" target="_blank" rel="noopener" style="color:var(--agua)">Dejar una reseña</a></span>
+      </div>
+    </div>
+    <div class="rev" tabindex="0" aria-label="Reseñas de pasajeros, desliza para ver más">
+      <blockquote class="tk"><header><span>Taxi Iguazú</span><span>5 / 5</span></header><p>Alejandro fue el mejor conductor que pude encontrar para mis traslados en Iguazú. Profesional y amable a la vez. ¡Muy recomendable!</p><footer>Pasajero<b>Maria Metaxaki</b></footer></blockquote>
+      <blockquote class="tk"><header><span>Taxi Iguazú</span><span>5 / 5</span></header><p>Desde el primer momento se mostró como una persona honesta, honorable y profundamente confiable… El precio que me ofreció fue justo y acorde, algo que se valora mucho en un lugar turístico.</p><footer>Pasajero<b>Luis Thomas Rivas</b></footer></blockquote>
+      <blockquote class="tk"><header><span>Taxi Iguazú</span><span>5 / 5</span></header><p>Puntualidad, responsabilidad, buen precio, muy atento Alejandro. Lo volvería a llamar sin dudas.</p><footer>Pasajero<b>Francisco Filannino</b></footer></blockquote>
+      <blockquote class="tk"><header><span>Taxi Iguazú</span><span>5 / 5</span></header><p>Muy buena experiencia. Muy puntual y atento Alejandro. ¡Nos dio recomendaciones exactas!</p><footer>Pasajero<b>Santiago Rossi</b></footer></blockquote>
+      <blockquote class="tk"><header><span>Taxi Iguazú</span><span>5 / 5</span></header><p>Excelente atención y servicio, puntualidad, excelentes recomendaciones para paseos: Cataratas, Aripuca, bar de hielo, Parque das Aves, Cataratas de Brasil, con traslado internacional.</p><footer>Pasajero<b>Gaby Barrionuevo</b></footer></blockquote>
+      <blockquote class="tk"><header><span>Taxi Iguazú</span><span>5 / 5</span></header><p>Muy buen servicio de Orlando y Marcelo, muy atentos, y lo recomiendo para el que vaya.</p><footer>Pasajero<b>Fernando Casanovas</b></footer></blockquote>
+      <blockquote class="tk"><header><span>Taxi Iguazú</span><span>5 / 5</span></header><p>Tu atención con los pasajeros, tu conocimiento local y tu disposición a ofrecer recomendaciones y consejos hacen que la experiencia de visitar Puerto Iguazú sea aún más especial.</p><footer>Pasajero<b>Daniel Antunez</b></footer></blockquote>
+    </div>
+  </div>
+</section>
+<div class="gap" data-lm="wanda" aria-hidden="true"></div>
+
+<!-- LLEGADA -->
+<section class="s" id="contacto" data-label="Llegada · Cataratas" aria-labelledby="h-ct">
+  <div class="w">
+    <div class="cartel rv"><small>Contacto</small><h2 id="h-ct">Llegaste. Cuéntanos tu viaje</h2></div>
+    <div class="ct">
+      <div class="gl rv">
+        <dl>
+          <div><dt>WhatsApp</dt><dd><a href="https://wa.me/5493548465150" target="_blank" rel="noopener">+54 9 3548 46-5150</a></dd></div>
+          <div><dt>Teléfono</dt><dd><a href="tel:+543757423747">+54 3757-423747</a></dd></div>
+          <div><dt>Dirección</dt><dd>Gervasio Artigas 359, Villa Alta<br>Puerto Iguazú, Argentina</dd></div>
+          <div><dt>Redes</dt><dd class="soc"><a class="btn g" href="https://www.instagram.com/alejandrolazarobarrionuevo/" target="_blank" rel="noopener">Instagram</a><a class="btn g" href="https://youtu.be/-_lpvTzhtJ0" target="_blank" rel="noopener">YouTube</a></dd></div>
+        </dl>
+      </div>
+      <form id="f" class="gl rv" aria-labelledby="h-ct">
+        <label for="n">Primer nombre *<input id="n" name="n" type="text" required autocomplete="given-name" maxlength="60"></label>
+        <label for="e">Correo electrónico *<input id="e" name="e" type="email" required autocomplete="email" maxlength="120"></label>
+        <label for="t">Número de teléfono *<input id="t" name="t" type="tel" required autocomplete="tel" inputmode="tel" pattern="[0-9+()\-\s]{7,20}" title="Solo números, espacios, + y guiones (7 a 20 caracteres)" maxlength="20"></label>
+        <label for="m">Mensaje *<textarea id="m" name="m" required maxlength="180" aria-describedby="c"></textarea><span class="cnt" id="c">0 / 180</span></label>
+        <button class="btn p" type="submit">Enviar mensaje por WhatsApp</button>
+        <div class="out" id="out" role="status" aria-live="polite" hidden><p>Tu mensaje está listo. Si WhatsApp no se abrió solo, <a id="wl" href="#" target="_blank" rel="noopener" style="color:var(--taxi)">toca aquí para enviarlo</a>.</p></div>
+      </form>
+    </div>
+  </div>
+</section>
+</main>
+
+<footer class="ft">
+  <div class="w">
+    <q>Iguazú, donde la naturaleza revela su esplendor y cada viaje se convierte en un recuerdo eterno.</q>
+    <div class="fg">
+      <div><a class="brand" href="#inicio"><span class="lamp">TAXI</span>Cordobés Iguazú</a><p style="margin-top:14px;color:var(--mute)">Gervasio Artigas 359 · Villa Alta · Puerto Iguazú · Argentina</p></div>
+      <nav aria-label="Navegación del pie"><h2>NAVEGACIÓN</h2><ul><li><a href="#inicio">Home</a></li><li><a href="#servicios">Servicios</a></li><li><a href="#galeria">Galería de fotos</a></li><li><a href="#nosotros">Nosotros</a></li><li><a href="#ventajas">Ventajas</a></li><li><a href="#resenas">Reseñas</a></li></ul></nav>
+      <div><h2>INFORMACIÓN</h2><ul><li><a href="https://cordobestaxiiguazu.com/politica-de-privacidad/" target="_blank" rel="noopener">Política de privacidad</a></li><li><a href="#servicios">Servicios destacados</a></li><li><a href="#contacto">Contacto</a></li></ul></div>
+    </div>
+    <p class="cr">© 2025 Cordobés Taxi Iguazú</p>
+  </div>
+</footer>
+
+<div class="hud">
+  <div class="odo" aria-hidden="true"><b id="odo">KM 00.0</b><span id="lab">Puerto Iguazú · salida</span></div>
+  <a class="btn p" href="https://wa.me/5493548465150" target="_blank" rel="noopener" aria-label="Escribir por WhatsApp (se abre en una pestaña nueva)"><svg viewBox="0 0 24 24" fill="currentColor" aria-hidden="true"><path d="M12 2a10 10 0 00-8.5 15.2L2 22l4.9-1.4A10 10 0 1012 2zm5.2 13.9c-.2.6-1.3 1.2-1.8 1.2-.5.1-1 .2-3.3-.7a11 11 0 01-4.7-4.1c-.4-.5-1.1-1.5-1.1-2.8s.7-2 1-2.3c.2-.3.5-.3.7-.3h.5c.2 0 .4 0 .6.5l.8 2c.1.2.1.4 0 .5l-.4.6c-.1.2-.3.3-.1.6a6.5 6.5 0 003 2.6c.3.1.5.1.6-.1l.8-1c.2-.2.4-.2.6-.1l1.9.9c.3.1.5.2.5.3 0 .1 0 .6-.2 1.1z"/></svg>WhatsApp</a>
+</div>
+
+<script>
+(function(){
+  var $=function(s,r){return (r||document).querySelector(s)},$$=function(s,r){return Array.prototype.slice.call((r||document).querySelectorAll(s))};
+  var root=document.documentElement,clamp=function(v,a,b){return Math.min(b,Math.max(a,v))};
+  var rm=matchMedia('(prefers-reduced-motion: reduce)').matches;
+
+  /* menú */
+  var mb=$('.menu'),nav=$('#nav');
+  mb.addEventListener('click',function(){var o=nav.classList.toggle('open');mb.setAttribute('aria-expanded',o)});
+  nav.addEventListener('click',function(e){if(e.target.tagName==='A'){nav.classList.remove('open');mb.setAttribute('aria-expanded','false')}});
+
+  /* ===== camino en perspectiva ===== */
+  var cv=$('#road'),g=cv.getContext('2d');
+  var W,H,hor,u,dpr;
+  var TOTAL=2600,N=9,A=.11,WV=.0035;
+  var tg=0,ps=0,cam=0,steer=0,steerS=0,vel=0;
+  function size(){dpr=Math.min(devicePixelRatio||1,1.5);W=innerWidth;H=innerHeight;cv.width=W*dpr;cv.height=H*dpr;g.setTransform(dpr,0,0,dpr,0,0);hor=H*.44;u=Math.min(W,H*1.15)}
+  function rgb(h){var n=parseInt(h.slice(1),16);return [n>>16,n>>8&255,n&255]}
+  var P=[[0,'#2b1650','#ff9a3c'],[.28,'#13224a','#7a4a6a'],[.5,'#021a12','#0f5a3f'],[.8,'#03221a','#1f7a58'],[1,'#17574a','#c8fbe9']].map(function(s){return [s[0],rgb(s[1]),rgb(s[2])]});
+  function mix(a,b,t){return [a[0]+(b[0]-a[0])*t,a[1]+(b[1]-a[1])*t,a[2]+(b[2]-a[2])*t]}
+  function css(c,a){return 'rgba('+(c[0]|0)+','+(c[1]|0)+','+(c[2]|0)+','+(a==null?1:a)+')'}
+  function sky(p){for(var i=1;i<P.length;i++){if(p<=P[i][0]){var k=(p-P[i-1][0])/(P[i][0]-P[i-1][0]);return [mix(P[i-1][1],P[i][1],k),mix(P[i-1][2],P[i][2],k)]}}return [P[4][1],P[4][2]]}
+  function h(n){var x=Math.sin(n*127.1+311.7)*43758.5453;return x-Math.floor(x)}
+  function CX(t,d){return W/2+W*(A*(Math.sin(WV*(cam+d))-Math.sin(WV*cam))+steerS*.26)*Math.pow(Math.max(0,1-t),1.4)}
+  var JUN=rgb('#063a22'),JUN2=rgb('#0e6b3c'),TRK=rgb('#2a1c12'),GR=rgb('#082a1a'),AS=rgb('#16211d'),WH=rgb('#e8efe9'),YE=rgb('#ffc21a');
+  var FF=[];for(var i0=0;i0<60;i0++)FF.push({x:h(i0),y:.18+h(i0+90)*.6,z:.4+h(i0+200)*.9,ph:h(i0+300)*6.28});
+  /* atractivos que van pasando por la ventanilla (z = distancia recorrida) */
+  var LM=[
+    {k:'aripuca',z:330,s:1,sc:1.6,hw:.9,f:aripuca},
+    {k:'cascada1',z:640,s:-1,sc:1,hw:2.2,f:cascada},
+    {k:'hito',z:930,s:1,sc:1.5,hw:.4,f:hito},
+    {k:'aves',z:1210,s:-1,sc:1.2,hw:1.5,f:aves},
+    {k:'cascada2',z:1500,s:1,sc:1,hw:2.2,f:cascada,boat:1},
+    {k:'ruinas',z:1790,s:-1,sc:1.5,hw:1.25,f:ruinas},
+    {k:'wanda',z:2080,s:1,sc:1.6,hw:1.1,f:wanda},
+    {z:TOTAL+26,s:0,f:falls}
+  ].sort(function(a,b){return b.z-a.z});
+
+  function fc(c,hc,a,al){return css(mix(c,hc,a),al)}
+  function el(x,y,rx,ry){g.beginPath();g.ellipse(x,y,Math.max(.1,rx),Math.max(.1,ry),0,0,6.283);g.fill()}
+  function poly(p){g.beginPath();g.moveTo(p[0],p[1]);for(var q=2;q<p.length;q+=2)g.lineTo(p[q],p[q+1]);g.closePath();g.fill()}
+
+  function aripuca(x,y,s,hc,a){
+    var w=s*1.7,hh=s*1.5,j,yy,half;
+    g.fillStyle=fc([107,74,42],hc,a);poly([x-w/2,y,x+w/2,y,x,y-hh]);
+    g.strokeStyle=fc([58,36,18],hc,a);g.lineWidth=Math.max(1,s*.05);
+    for(j=1;j<7;j++){yy=y-hh*j/7;half=w/2*(1-j/7);g.beginPath();g.moveTo(x-half,yy);g.lineTo(x+half,yy);g.stroke()}
+    g.fillStyle=fc([18,10,5],hc,a);poly([x-s*.14,y,x+s*.14,y,x+s*.1,y-s*.4,x-s*.1,y-s*.4]);
+  }
+  function hito(x,y,s,hc,a){
+    var bw=s*.34,tw=s*.16,hh=s*2.1;
+    g.fillStyle=fc([232,238,242],hc,a);poly([x-bw,y,x+bw,y,x+tw,y-hh,x-tw,y-hh]);
+    g.fillStyle=fc([117,170,219],hc,a);
+    [[.1,.32],[.55,.78]].forEach(function(b){var w0=bw+(tw-bw)*b[0],w1=bw+(tw-bw)*b[1];poly([x-w0,y-hh*b[0],x+w0,y-hh*b[0],x+w1,y-hh*b[1],x-w1,y-hh*b[1]])});
+    g.fillStyle=fc([70,70,70],hc,a);g.fillRect(x-bw*1.4,y-s*.1,bw*2.8,s*.1);
+    g.fillRect(x+tw-s*.02,y-hh-s*.42,s*.035,s*.46);
+    g.fillStyle=fc([117,170,219],hc,a);g.fillRect(x+tw,y-hh-s*.4,s*.32,s*.09);
+    g.fillStyle=fc([245,245,245],hc,a);g.fillRect(x+tw,y-hh-s*.31,s*.32,s*.09);
+    g.fillStyle=fc([117,170,219],hc,a);g.fillRect(x+tw,y-hh-s*.22,s*.32,s*.09);
+  }
+  function aves(x,y,s,hc,a,time){
+    var R=s*1.5,j,hh2,half;
+    g.fillStyle=fc([160,230,205],hc,a,.16);g.beginPath();g.arc(x,y,R,Math.PI,0);g.closePath();g.fill();
+    g.strokeStyle=fc([190,240,220],hc,a,.6);g.lineWidth=Math.max(1,s*.03);
+    g.beginPath();g.arc(x,y,R,Math.PI,0);g.stroke();
+    for(j=1;j<5;j++){g.beginPath();g.ellipse(x,y,R*j/5,R,0,Math.PI,0);g.stroke()}
+    for(j=1;j<4;j++){hh2=R*j/4;half=Math.sqrt(R*R-hh2*hh2);g.beginPath();g.moveTo(x-half,y-hh2);g.lineTo(x+half,y-hh2);g.stroke()}
+    var ts=s*.55,tx=x+R*.2,ty=y-R*.42;
+    g.strokeStyle=fc(TRK,hc,a);g.lineWidth=Math.max(1,s*.06);g.beginPath();g.moveTo(x-R*.75,ty+ts*.38);g.lineTo(x+R*.8,ty+ts*.38);g.stroke();
+    g.fillStyle=fc([20,20,24],hc,a);poly([tx-ts*.5,ty,tx-ts*.95,ty+ts*.6,tx-ts*.7,ty+ts*.65,tx-ts*.3,ty+ts*.2]);el(tx,ty,ts*.55,ts*.32);
+    g.fillStyle=fc([250,245,225],hc,a);el(tx+ts*.3,ty-ts*.03,ts*.2,ts*.2);
+    g.fillStyle=fc([255,150,20],hc,a);poly([tx+ts*.45,ty-ts*.22,tx+ts*1.35,ty-ts*.12,tx+ts*1.3,ty+ts*.1,tx+ts*.45,ty+ts*.12]);
+    g.fillStyle=fc([20,20,20],hc,a);poly([tx+ts*1.1,ty-ts*.15,tx+ts*1.35,ty-ts*.12,tx+ts*1.3,ty+ts*.1,tx+ts*1.05,ty+ts*.07]);
+    var mx=x-R*.42,my=y-R*.3;
+    g.fillStyle=fc([210,30,40],hc,a);el(mx,my,ts*.28,ts*.42);g.fillStyle=fc([30,90,210],hc,a);el(mx+ts*.12,my+ts*.06,ts*.14,ts*.3);
+    g.fillStyle=fc([250,200,40],hc,a);el(mx+ts*.1,my-ts*.05,ts*.08,ts*.2);
+    var fb=[['#d21e28','#1e5ad2','#f0c828'],['#14141a','#26262c','#ff9614'],['#2864dc','#f0c828','#222'],['#d21e28','#f0c828','#222']],ph,fx2;
+    for(var q=0;q<4;q++){
+      ph=q*1.57;fx2=Math.cos(time*.0009+ph);
+      bird(x+fx2*R*1.15,y-R*(.55+.3*Math.sin(time*.0013+ph)),s*.26,Math.sin(time*.02+ph*3),Math.sin(time*.0009+ph)>0?1:-1,fb[q][0],fb[q][1],fb[q][2]);
+    }
+  }
+  function ruinas(x,y,s,hc,a){
+    var w=s*2.6,hh=s*2.1,j;
+    var R1=fc([204,92,58],hc,a),R2=fc([156,64,40],hc,a),R3=fc([112,44,28],hc,a),DK=fc([30,10,6],hc,a);
+    g.fillStyle=R2;
+    poly([x-w*.62,y,x-w*.62,y-hh*.38,x-w*.5,y-hh*.42,x-w*.36,y-hh*.34,x-w*.36,y]);
+    poly([x+w*.36,y,x+w*.36,y-hh*.34,x+w*.5,y-hh*.46,x+w*.62,y-hh*.36,x+w*.62,y]);
+    g.fillStyle=DK;
+    [-.5,.5].forEach(function(px){g.fillRect(x+px*w-w*.03,y-hh*.2,w*.06,hh*.2);g.beginPath();g.arc(x+px*w,y-hh*.2,w*.03,Math.PI,0);g.fill()});
+    g.fillStyle=R1;
+    poly([x-w*.36,y,x-w*.36,y-hh*.82,x-w*.28,y-hh*.9,x-w*.2,y-hh*.88,x-w*.12,y-hh,x+w*.05,y-hh*.96,x+w*.14,y-hh*.86,x+w*.26,y-hh*.9,x+w*.36,y-hh*.78,x+w*.36,y]);
+    g.fillStyle=R3;
+    [-.3,-.14,.14,.3].forEach(function(px){g.fillRect(x+px*w-w*.025,y-hh*.7,w*.05,hh*.7)});
+    g.fillStyle=R2;g.fillRect(x-w*.36,y-hh*.46,w*.72,hh*.04);
+    g.fillStyle=DK;
+    g.fillRect(x-w*.09,y-hh*.36,w*.18,hh*.36);g.beginPath();g.arc(x,y-hh*.36,w*.09,Math.PI,0);g.fill();
+    [-.22,.22].forEach(function(px){g.fillRect(x+px*w-w*.035,y-hh*.7,w*.07,hh*.17);g.beginPath();g.arc(x+px*w,y-hh*.7,w*.035,Math.PI,0);g.fill()});
+    g.beginPath();g.arc(x,y-hh*.66,w*.05,0,6.283);g.fill();
+    g.fillStyle=R3;
+    for(j=0;j<4;j++)g.fillRect(x-w*(.3-j*.04),y-hh*.035*(j+1),w*(.6-j*.08),hh*.035);
+    g.fillStyle=fc(JUN2,hc,a);
+    el(x-w*.2,y-hh*.88,w*.05,hh*.025);el(x+w*.18,y-hh*.88,w*.06,hh*.03);el(x-w*.5,y-hh*.42,w*.05,hh*.025);
+  }
+  function wanda(x,y,s,hc,a){
+    var gl=g.createRadialGradient(x,y-s*.5,2,x,y-s*.5,s*1.4);
+    gl.addColorStop(0,css(mix([170,110,255],hc,a),.38));gl.addColorStop(1,css([170,110,255],0));
+    g.fillStyle=gl;g.fillRect(x-s*1.4,y-s*1.9,s*2.8,s*2.8);
+    [[-.9,.7,.14],[-.55,1.1,.17],[-.2,1.6,.2],[.2,1.3,.18],[.55,.9,.15],[.85,.6,.12]].forEach(function(c,i){
+      var bx=x+c[0]*s,hh=c[1]*s,w=c[2]*s;
+      g.fillStyle=fc(i%2?[150,92,222]:[199,155,255],hc,a);poly([bx-w,y,bx-w*.7,y-hh*.8,bx,y-hh,bx+w*.7,y-hh*.8,bx+w,y]);
+      g.fillStyle=fc([92,50,150],hc,a,.55);poly([bx,y,bx,y-hh,bx+w*.7,y-hh*.8,bx+w,y]);
+    });
+    g.fillStyle=fc([60,40,50],hc,a);el(x,y,s*1.1,s*.12);
+  }
+  function falls(x,y,s,hc,a,time){
+    var w=s*6.5,hh=s*2.1,j,gx;
+    g.fillStyle='rgb(4,34,22)';
+    poly([x-w,y,x-w,y-hh*1.15,x-w*.5,y-hh*.92,x-w*.2,y-hh*.74,x-w*.2,y]);
+    poly([x+w,y,x+w,y-hh*1.15,x+w*.5,y-hh*.88,x+w*.22,y-hh*.74,x+w*.22,y]);
+    var cg=g.createLinearGradient(0,y-hh*.74,0,y);cg.addColorStop(0,'rgba(245,255,252,.5)');cg.addColorStop(1,'rgba(245,255,252,.95)');
+    g.fillStyle=cg;g.fillRect(x-w*.2,y-hh*.74,w*.42,hh*.74);
+    g.strokeStyle='rgba(255,255,255,.6)';g.lineWidth=Math.max(1.5,s*.05);g.setLineDash([s*.28,s*.22]);g.lineDashOffset=-(time*.3%1000);
+    for(j=0;j<10;j++){gx=x-w*.19+j*(w*.4/9);g.beginPath();g.moveTo(gx,y-hh*.74);g.lineTo(gx,y);g.stroke()}
+    g.setLineDash([]);
+    var mg3=g.createRadialGradient(x,y,2,x,y,s*2.2);mg3.addColorStop(0,'rgba(250,255,253,.95)');mg3.addColorStop(1,'rgba(250,255,253,0)');
+    g.fillStyle=mg3;g.fillRect(x-s*2.4,y-s*1.2,s*4.8,s*2.4);
+    var rc=['255,90,90','255,200,80','120,230,140','90,170,255'];
+    g.lineWidth=Math.max(2,s*.07);
+    for(j=0;j<4;j++){g.strokeStyle='rgba('+rc[j]+',.13)';g.beginPath();g.arc(x+w*.12,y-hh*.1,s*(2.4+j*.12),Math.PI*1.08,Math.PI*1.7);g.stroke()}
+  }
+  function bird(x,y,sz,fl,dir,body,wing,beak){
+    g.save();g.translate(x,y);g.scale(dir,1);
+    g.fillStyle=wing;poly([-sz*.2,0,sz*.3,0,sz*.05,-sz*.95*fl]);
+    g.fillStyle=body;el(0,0,sz*.5,sz*.2);el(-sz*.52,-sz*.05,sz*.16,sz*.15);
+    g.fillStyle=beak;poly([-sz*.62,-sz*.1,-sz*.98,-sz*.02,-sz*.62,sz*.06]);
+    g.fillStyle=wing;poly([sz*.4,-sz*.05,sz*1.1,sz*.12,sz*1.05,sz*.2,sz*.4,sz*.1]);
+    g.restore();
+  }
+  function flyby(time){
+    var cols=[['#d21e28','#1e5ad2','#f0c828'],['#14141a','#26262c','#ff9614'],['#2864dc','#f0c828','#222']],j,p,sz;
+    for(j=0;j<3;j++){
+      p=(time*.00022+j*.33)%1;sz=u*.07*(1+.35*j);
+      bird(W*(1.15-1.3*p),H*(.2+.12*j)+Math.sin(time*.003+j)*10,sz,Math.sin(time*.02+j*2),1,cols[j][0],cols[j][1],cols[j][2]);
+    }
+  }
+  function cascada(x,y,s,hc,a,time,boat){
+    var hw=s*2.2,hh=s*3,j,gy=y-s*.1,cg,fx,fw,ty;
+    g.save();g.globalCompositeOperation='lighter';
+    var hl2=g.createRadialGradient(x,y-hh*.5,2,x,y-hh*.5,hw*1.1);hl2.addColorStop(0,'rgba(200,240,235,.22)');hl2.addColorStop(1,'rgba(200,240,235,0)');
+    g.fillStyle=hl2;g.fillRect(x-hw*1.2,y-hh*1.6,hw*2.4,hh*2);g.restore();
+    /* pared de basalto en terrazas */
+    g.fillStyle=fc([58,44,36],hc,a);
+    poly([x-hw,y,x-hw,y-hh*.7,x-hw*.6,y-hh*.78,x-hw*.3,y-hh*.7,x,y-hh*.95,x+hw*.35,y-hh*.88,x+hw*.65,y-hh*.74,x+hw,y-hh*.66,x+hw,y]);
+    g.fillStyle=fc([104,84,68],hc,a);
+    poly([x-hw,y-hh*.2,x-hw,y-hh*.7,x-hw*.6,y-hh*.78,x-hw*.3,y-hh*.7,x-hw*.3,y-hh*.2]);
+    poly([x+hw*.35,y-hh*.2,x+hw*.35,y-hh*.88,x+hw*.65,y-hh*.74,x+hw,y-hh*.66,x+hw,y-hh*.2]);
+    g.strokeStyle=fc([34,26,20],hc,a);g.lineWidth=Math.max(1,s*.025);
+    for(j=1;j<6;j++){g.beginPath();g.moveTo(x-hw,y-hh*.13*j);g.lineTo(x+hw,y-hh*.13*j);g.stroke()}
+    g.fillStyle=fc(JUN,hc,a);
+    for(j=0;j<12;j++)el(x-hw+j*hw/5.5,y-hh*(.7+.2*h(j+3))+(j%3)*s*.05,s*.42,s*.3);
+    /* cortinas de agua */
+    [[-.62,.2,.7],[-.3,.15,.76],[.02,.46,.94],[.5,.2,.82]].forEach(function(f,i){
+      fx=x+f[0]*hw;fw=f[1]*hw;ty=y-hh*f[2];
+      g.fillStyle='rgba(235,250,247,.3)';g.fillRect(fx-fw*.62,ty,fw*1.24,gy-ty);
+      cg=g.createLinearGradient(0,ty,0,gy);cg.addColorStop(0,'rgba(250,255,253,.8)');cg.addColorStop(1,'rgba(255,255,255,1)');
+      g.fillStyle=cg;g.fillRect(fx-fw/2,ty,fw,gy-ty);
+      g.strokeStyle='rgba(170,215,215,.75)';g.lineWidth=Math.max(1,s*.04);g.setLineDash([s*.34,s*.22]);g.lineDashOffset=-(time*.28%1000)-i*17;
+      for(j=0;j<3;j++){g.beginPath();g.moveTo(fx-fw*.3+j*fw*.3,ty);g.lineTo(fx-fw*.3+j*fw*.3,gy);g.stroke()}
+      g.setLineDash([]);
+    });
+    /* pozo y neblina */
+    g.fillStyle='rgba(60,200,190,.95)';el(x,y-s*.04,hw*1.0,s*.4);
+    g.strokeStyle='rgba(255,255,255,.6)';g.lineWidth=Math.max(1,s*.03);
+    for(j=1;j<4;j++){g.beginPath();g.ellipse(x,y-s*.04,hw*(.3+j*.2),s*(.1+j*.07),0,0,6.283);g.stroke()}
+    var mg4=g.createRadialGradient(x,gy,2,x,gy,s*2.6);mg4.addColorStop(0,'rgba(250,255,253,.95)');mg4.addColorStop(1,'rgba(250,255,253,0)');
+    g.fillStyle=mg4;g.fillRect(x-s*2.8,gy-s*2,s*5.6,s*3.4);
+    var rc=['255,90,90','255,200,80','120,230,140','90,170,255'];
+    g.lineWidth=Math.max(2,s*.08);
+    for(j=0;j<4;j++){g.strokeStyle='rgba('+rc[j]+',.28)';g.beginPath();g.arc(x+hw*.25,gy,s*(2.6+j*.14),Math.PI*1.08,Math.PI*1.72);g.stroke()}
+    /* lancha inflable con pasajeros */
+    if(boat){
+      var bx=x+Math.sin(time*.0007)*hw*.12,by=y+s*.22+Math.sin(time*.003)*s*.02,bl=s*.95;
+      g.fillStyle='rgba(255,255,255,.6)';el(bx+bl*.9,by+s*.06,bl*.7,s*.05);
+      g.fillStyle='#16161a';poly([bx-bl,by-s*.12,bx+bl,by-s*.12,bx+bl*.78,by+s*.14,bx-bl*.78,by+s*.14]);
+      g.fillStyle='#e8231c';g.fillRect(bx-bl,by-s*.14,bl*2,s*.07);
+      [-.7,-.35,0,.35,.7].forEach(function(p2,i){
+        g.fillStyle=i%2?'#ff7a00':'#ffb400';el(bx+p2*bl,by-s*.26,s*.13,s*.17);
+        g.fillStyle='#e8c19a';el(bx+p2*bl,by-s*.47,s*.075,s*.075);
+      });
+    }
+  }
+  function drawLM(L,time,hc){
+    var d=L.z-cam;L.near=false;if(d<-4||d>330)return;
+    var t=N/(N+d),y=hor+(H-hor)*t,c=CX(t,d),s=u*t,a=Math.pow(Math.max(0,1-t),.8)*.25;
+    if(L.f===falls){falls(c,y,s,hc,a,time);return}
+    var s2=s*L.sc,xx=c+L.s*(u*t*.44+.85*L.hw*s2);
+    L.near=d<140&&d>-3;
+    g.globalAlpha=clamp((d+4)/8,0,1);L.f(xx,y,s2,hc,a,time,L.boat);g.globalAlpha=1;
+    if(L.f===cascada&&L.near){
+      var k2=clamp((140-d)/100,0,1),sp2=g.createRadialGradient(xx,y,2,xx,y,u*.9);
+      sp2.addColorStop(0,'rgba(235,252,248,'+.2*k2+')');sp2.addColorStop(1,'rgba(235,252,248,0)');
+      g.fillStyle=sp2;g.fillRect(0,0,W,H);
+    }
+  }
+
+  function leaf(bx,by,len,ang,wid,col){
+    var ex=bx+Math.cos(ang)*len,ey=by+Math.sin(ang)*len,nx=-Math.sin(ang)*wid,ny=Math.cos(ang)*wid,mx=bx+(ex-bx)*.5,my=by+(ey-by)*.5;
+    g.fillStyle=col;g.beginPath();g.moveTo(bx,by);g.quadraticCurveTo(mx+nx,my+ny,ex,ey);g.quadraticCurveTo(mx-nx,my-ny,bx,by);g.fill();
+    g.strokeStyle='rgba(120,220,150,.22)';g.lineWidth=1;g.beginPath();g.moveTo(bx,by);g.lineTo(ex,ey);g.stroke();
+  }
+  function fg(time){
+    var sw=rm?0:Math.sin(time*.0011),k=u*.5,i,ang,ln,col,cols=['rgba(2,22,12,.97)','rgba(5,50,29,.96)'];
+    for(i=0;i<6;i++){ang=-1.5+i*.25+sw*.035*(i%2?1:-1);ln=k*(.55+h(i+60)*.4);col=cols[i%2];
+      leaf(-u*.02,H+u*.02,ln,ang,ln*.18,col);leaf(W+u*.02,H+u*.02,ln,Math.PI-ang,ln*.18,col)}
+    for(i=0;i<5;i++){ang=.35+i*.22+sw*.035;ln=k*(.4+h(i+70)*.35);col=cols[i%2];
+      leaf(-u*.02,-u*.02,ln,ang,ln*.17,col);leaf(W+u*.02,-u*.02,ln,Math.PI-ang,ln*.17,col)}
+    g.lineWidth=2.4;g.lineCap='round';
+    for(i=0;i<10;i++){
+      var x0=(i+.3+h(i)*.4)/10*W,L=H*(.05+h(i+50)*.15),sx=rm?0:Math.sin(time*.0013+i)*14;
+      g.strokeStyle='rgba(3,32,18,.92)';g.beginPath();g.moveTo(x0,-4);g.bezierCurveTo(x0+sx*.4,L*.3,x0-sx*.6,L*.6,x0+sx,L);g.stroke();
+      g.fillStyle='rgba(8,70,40,.95)';el(x0+sx,L+4,4.5,8);el(x0+sx*.6,L*.62,3.5,6);
+    }
+  }
+  function morpho(time){
+    if(rm)return;
+    for(var j=0;j<10;j++){
+      var bx=((h(j+400)*W+time*.02*(.3+h(j+410))+Math.sin(time*.002+j)*30)%W+W)%W,
+          by=hor+(H-hor)*(.15+h(j+420)*.55)+Math.cos(time*.0025+j*2)*16,
+          fl=Math.abs(Math.sin(time*.018+j*1.7)),sz=3+h(j+430)*4+u*.004;
+      g.fillStyle='rgba(60,170,255,.92)';
+      g.beginPath();g.ellipse(bx-sz*.7,by,sz*fl+.4,sz,0,0,6.283);g.fill();
+      g.beginPath();g.ellipse(bx+sz*.7,by,sz*fl+.4,sz,0,0,6.283);g.fill();
+      g.fillStyle='rgba(10,20,40,.9)';g.fillRect(bx-.7,by-sz*.6,1.4,sz*1.2);
+    }
+  }
+  function loros(time,night){
+    if(rm||night>.8)return;
+    g.strokeStyle='rgba(70,190,80,'+(.9*(1-night))+')';g.lineWidth=2.2;g.lineCap='round';
+    for(var j=0;j<8;j++){
+      var px=((h(j+500)*W+time*.04*(.6+h(j+510)*.6))%(W+240))-120,py=hor*(.18+h(j+520)*.4)+Math.sin(time*.002+j)*8,fl=Math.sin(time*.014+j*2)*7;
+      g.beginPath();g.moveTo(px-9,py+fl);g.quadraticCurveTo(px-4,py-4,px,py);g.quadraticCurveTo(px+4,py-4,px+9,py+fl);g.stroke();
+    }
+  }
+  function shafts(al){
+    if(al<.01)return;
+    g.save();g.globalCompositeOperation='lighter';
+    for(var j=0;j<4;j++){var x0=W*(.2+j*.2),gr2=g.createLinearGradient(x0,0,x0-W*.1,H*.7);
+      gr2.addColorStop(0,'rgba(255,230,160,'+al+')');gr2.addColorStop(1,'rgba(255,230,160,0)');
+      g.fillStyle=gr2;poly([x0,0,x0+W*.06,0,x0-W*.04,H*.7,x0-W*.1,H*.7])}
+    g.restore();
+  }
+  function taxi(time,sp){
+    var bw=Math.min(u*.3,W*.5),bh=bw*.46,bob=rm?0:Math.sin(time*.012)*(.6+sp*1.4);
+    g.save();g.translate(W/2+steerS*u*.025,H-u*.05+bob);g.rotate(steerS*.035);
+    g.fillStyle='rgba(0,0,0,.5)';el(0,2,bw*.62,bh*.12);
+    g.fillStyle='#050807';g.fillRect(-bw*.46,-bh*.2,bw*.16,bh*.22);g.fillRect(bw*.3,-bh*.2,bw*.16,bh*.22);
+    g.fillStyle='#e9a800';poly([-bw*.5,-bh*.15,bw*.5,-bh*.15,bw*.5,-bh*.55,-bw*.5,-bh*.55]);
+    g.fillStyle='#d99a00';poly([-bw*.4,-bh*.55,bw*.4,-bh*.55,bw*.3,-bh,-bw*.3,-bh]);
+    g.fillStyle='#0a1512';poly([-bw*.34,-bh*.58,bw*.34,-bh*.58,bw*.26,-bh*.94,-bw*.26,-bh*.94]);
+    g.fillStyle='rgba(143,240,223,.14)';poly([-bw*.34,-bh*.58,-bw*.05,-bh*.58,bw*.05,-bh*.94,-bw*.26,-bh*.94]);
+    g.fillStyle='#f0f0ec';g.fillRect(-bw*.1,-bh*.4,bw*.2,bh*.13);
+    g.fillStyle='#ffc21a';g.fillRect(-bw*.12,-bh*1.13,bw*.24,bh*.15);
+    g.fillStyle='#1a1300';g.font='800 '+Math.max(6,bw*.075)+'px "Barlow Condensed","Arial Narrow",sans-serif';g.textAlign='center';g.textBaseline='middle';g.fillText('TAXI',0,-bh*1.055);
+    g.save();g.globalCompositeOperation='lighter';
+    var lg=g.createRadialGradient(0,-bh*1.05,1,0,-bh*1.05,bw*.3);lg.addColorStop(0,'rgba(255,194,26,.5)');lg.addColorStop(1,'rgba(255,194,26,0)');
+    g.fillStyle=lg;g.fillRect(-bw*.3,-bh*1.4,bw*.6,bw*.6);
+    [-1,1].forEach(function(sd){
+      var rg=g.createRadialGradient(sd*bw*.4,-bh*.38,1,sd*bw*.4,-bh*.38,bw*.2);rg.addColorStop(0,'rgba(255,50,40,.85)');rg.addColorStop(1,'rgba(255,50,40,0)');
+      g.fillStyle=rg;g.fillRect(sd*bw*.4-bw*.2,-bh*.38-bw*.2,bw*.4,bw*.4);
+    });
+    g.restore();
+    g.fillStyle='#ff4a3a';g.fillRect(-bw*.47,-bh*.45,bw*.12,bh*.12);g.fillRect(bw*.35,-bh*.45,bw*.12,bh*.12);
+    g.restore();
+  }
+
+  function draw(time){
+    cam=ps*TOTAL;
+    var s=sky(ps),top=s[0],hc=s[1],i,x,y;
+    var night=clamp((ps-.2)/.25,0,1)*(1-clamp((ps-.8)/.2,0,1));
+    var m=clamp((ps-.84)/.16,0,1),sg=1-clamp(ps/.3,0,1);
+    var gr=g.createLinearGradient(0,0,0,hor);gr.addColorStop(0,css(top));gr.addColorStop(1,css(hc));
+    g.fillStyle=gr;g.fillRect(0,0,W,hor+2);
+    if(night>0){
+      g.fillStyle='#fff';
+      for(i=0;i<80;i++){g.globalAlpha=night*(.35+.5*Math.abs(Math.sin(time*.0012+i)));g.fillRect(h(i)*W,h(i+50)*hor*.9,1.4,1.4)}
+      g.globalAlpha=night;
+      var mg=g.createRadialGradient(W*.78,hor*.3,2,W*.78,hor*.3,u*.14);mg.addColorStop(0,'rgba(255,244,214,.9)');mg.addColorStop(.3,'rgba(255,244,214,.25)');mg.addColorStop(1,'rgba(255,244,214,0)');
+      g.fillStyle=mg;g.fillRect(W*.78-u*.14,hor*.3-u*.14,u*.28,u*.28);
+      g.fillStyle='#fff4d6';g.beginPath();g.arc(W*.78,hor*.3,u*.032,0,6.283);g.fill();
+      g.globalAlpha=1;
+    }
+    if(sg>0){var sn=g.createRadialGradient(W*.3,hor,2,W*.3,hor,u*.6);sn.addColorStop(0,'rgba(255,190,80,'+.7*sg+')');sn.addColorStop(1,'rgba(255,190,80,0)');g.fillStyle=sn;g.fillRect(0,0,W,hor)}
+    loros(time,night);
+    g.fillStyle=css(mix(hc,[2,22,14],.62));
+    g.beginPath();g.moveTo(0,hor+2);
+    for(x=0;x<=W+20;x+=20){g.lineTo(x,hor-(16+40*(Math.sin(x*.011+cam*.0008)*.5+.5)+18*Math.sin(x*.031))*(u/700))}
+    g.lineTo(W,hor+2);g.fill();
+    /* piso */
+    var bh=3,t,d,c,rh,fa;
+    for(y=hor;y<H;y+=bh){
+      t=clamp((y+bh/2-hor)/(H-hor),.004,1);d=N*(1/t-1);c=CX(t,d);rh=u*.34*t;
+      fa=Math.pow(1-t,.7)*.88;
+      g.fillStyle=css(mix(GR,hc,fa));g.fillRect(0,y,W,bh+1);
+      g.fillStyle=css(mix(AS,hc,Math.pow(1-t,.8)*.88));g.fillRect(c-rh,y,rh*2,bh+1);
+      g.fillStyle=css(mix(WH,hc,fa));
+      g.fillRect(c-rh,y,Math.max(1,rh*.05),bh+1);g.fillRect(c+rh-Math.max(1,rh*.05),y,Math.max(1,rh*.05),bh+1);
+      if((((cam+d)/14)|0)%2===0){g.fillStyle=css(mix(YE,hc,fa));g.fillRect(c-rh*.022,y,Math.max(1,rh*.044),bh+1)}
+    }
+    var mb=g.createLinearGradient(0,hor-10,0,hor+(H-hor)*.3);
+    mb.addColorStop(0,css(hc,0));mb.addColorStop(.35,css(hc,.32));mb.addColorStop(1,css(hc,0));
+    g.fillStyle=mb;g.fillRect(0,hor-10,W,(H-hor)*.3+10);
+    /* selva y atractivos, de lejos a cerca */
+    var SP=5,k0=Math.ceil((cam+1)/SP),k1=Math.floor((cam+300)/SP),li=0,k,sd,r,zw,d2,t2,y2,c2,xx,hg,w1,aa2,ty,rh2,bx,bs,j,fl,tx0,ty0,td;
+    for(k=k1;k>=k0;k--){
+      td=k*SP-cam;
+      while(li<LM.length&&LM[li].z-cam>=td){drawLM(LM[li],time,hc);li++}
+      for(sd=-1;sd<=1;sd+=2){
+        r=h(k*2+(sd>0?1:0));
+        zw=k*SP+r*SP*.7;d2=zw-cam;if(d2<1)continue;
+        t2=N/(N+d2);y2=hor+(H-hor)*t2;c2=CX(t2,d2);aa2=Math.pow(1-t2,.8)*.9;rh2=u*.34*t2;
+        bx=c2+sd*(rh2+u*t2*(.03+h(k*11+sd)*.3));bs=u*t2*(.1+h(k*5+sd)*.12);
+        g.fillStyle=fc(JUN,hc,aa2);el(bx,y2-bs*.3,bs*1.1,bs*.6);
+        g.fillStyle=fc(JUN2,hc,aa2,.8);el(bx+sd*bs*.3,y2-bs*.55,bs*.7,bs*.4);
+        if(r<.12)continue;
+        xx=c2+sd*u*t2*(.5+h(k*7+sd)*.95);
+        hg=u*t2*(.6+r*.75)*1.5;w1=Math.max(1,u*.04*t2);
+        ty=h(k*3+sd*5+1);
+        if(ty<.4){
+          g.fillStyle=fc(TRK,hc,aa2);g.fillRect(xx-w1/2,y2-hg*.6,w1,hg*.6);
+          g.fillStyle=fc(JUN,hc,aa2);el(xx,y2-hg*.8,hg*.27,hg*.24);el(xx-sd*hg*.12,y2-hg*.62,hg*.22,hg*.16);
+          g.fillStyle=fc(JUN2,hc,aa2,.5);el(xx+sd*hg*.06,y2-hg*.88,hg*.15,hg*.09);
+          if(r>.55){g.strokeStyle=fc(JUN,hc,aa2);g.lineWidth=Math.max(1,w1*.25);
+            for(j=0;j<3;j++){g.beginPath();g.moveTo(xx+(j-1)*hg*.14,y2-hg*.6);g.lineTo(xx+(j-1)*hg*.14+sd*hg*.02,y2-hg*(.28+j*.05));g.stroke()}}
+        }else if(ty<.7){
+          tx0=xx;ty0=y2-hg*.85;
+          g.strokeStyle=fc(TRK,hc,aa2);g.lineWidth=Math.max(1,w1*.7);g.beginPath();g.moveTo(xx,y2);g.quadraticCurveTo(xx+sd*hg*.08,y2-hg*.45,tx0,ty0);g.stroke();
+          g.strokeStyle=fc(JUN2,hc,aa2);g.lineWidth=Math.max(1,w1*.55);
+          for(j=0;j<7;j++){fl=hg*.3;var an=Math.PI*(1.05+j*.15);g.beginPath();g.moveTo(tx0,ty0);g.quadraticCurveTo(tx0+Math.cos(an)*fl*.6,ty0+Math.sin(an)*fl*.6-fl*.1,tx0+Math.cos(an)*fl,ty0+Math.sin(an)*fl*.4+fl*.45);g.stroke()}
+        }else{
+          g.fillStyle=fc(TRK,hc,aa2);g.fillRect(xx-w1/2,y2-hg*1.05,w1,hg*1.05);
+          g.fillStyle=fc(JUN,hc,aa2);el(xx,y2-hg*1.12,hg*.2,hg*.14);el(xx+sd*hg*.1,y2-hg*1.02,hg*.16,hg*.1);
+          g.strokeStyle=fc(JUN2,hc,aa2);g.lineWidth=Math.max(1,w1*.2);
+          for(j=0;j<2;j++){g.beginPath();g.moveTo(xx+(j?1:-1)*hg*.1,y2-hg*1.02);g.lineTo(xx+(j?1:-1)*hg*.11,y2-hg*.55);g.stroke()}
+        }
+      }
+    }
+    while(li<LM.length){drawLM(LM[li],time,hc);li++}
+    shafts(Math.max(.07*sg,.1*m));
+    /* luciérnagas */
+    var fv=clamp((ps-.25)/.2,0,1)*(1-clamp((ps-.9)/.1,0,1));
+    if(fv>0&&!rm){
+      for(i=0;i<FF.length;i++){var f=FF[i];
+        x=((f.x*W-cam*.06*f.z+Math.sin(time*.0006+f.ph)*26)%W+W)%W;y=f.y*H+Math.cos(time*.0009+f.ph)*18;
+        var al=fv*(.35+.35*Math.sin(time*.003+f.ph)),rr=2.2*f.z*(u/700+.6);
+        g.fillStyle='rgba(210,255,120,'+al*.28+')';g.beginPath();g.arc(x,y,rr*4,0,6.283);g.fill();
+        g.fillStyle='rgba(235,255,170,'+al+')';g.beginPath();g.arc(x,y,rr,0,6.283);g.fill();
+      }
+    }
+    morpho(time);
+    if(!rm)LM.forEach(function(L){if(L.f===aves&&L.near)flyby(time)});
+    /* faros */
+    g.save();g.globalCompositeOperation='lighter';
+    var hl=g.createLinearGradient(0,H,0,hor+(H-hor)*.2);hl.addColorStop(0,'rgba(255,240,190,.3)');hl.addColorStop(1,'rgba(255,240,190,0)');
+    g.fillStyle=hl;g.beginPath();g.moveTo(W/2-u*.1,H);g.lineTo(W/2-u*.3,hor+(H-hor)*.22);g.lineTo(W/2+u*.3,hor+(H-hor)*.22);g.lineTo(W/2+u*.1,H);g.fill();
+    g.restore();
+    var sp=clamp(Math.abs(vel)/18,0,1);
+    if(sp>.05&&!rm){g.strokeStyle='rgba(255,255,255,'+sp*.35+')';g.lineWidth=1.4;
+      for(i=0;i<22;i++){var an2=Math.PI*(.08+h(i+7)*.84),r0=u*(.25+h(i+3)*.3),r1=r0+u*(.15+.5*sp*h(i+9)),sx2=(i%2?1:-1);
+        g.beginPath();g.moveTo(W/2+Math.cos(an2)*r0*1.6*sx2,hor+Math.sin(an2)*r0*.9);g.lineTo(W/2+Math.cos(an2)*r1*1.6*sx2,hor+Math.sin(an2)*r1*.9);g.stroke()}}
+    taxi(time,sp);
+    fg(time);
+    var vg=g.createRadialGradient(W/2,H*.5,u*.35,W/2,H*.5,Math.max(W,H)*.78);
+    vg.addColorStop(0,'rgba(0,10,5,0)');vg.addColorStop(1,'rgba(0,10,5,'+.6*(1-m*.8)+')');
+    g.fillStyle=vg;g.fillRect(0,0,W,H);
+    if(m>0){
+      var fx=CX(.02,N*49),cg=g.createRadialGradient(fx,hor,4,fx,hor,u*1.1);
+      cg.addColorStop(0,'rgba(235,252,248,'+.7*m+')');cg.addColorStop(1,'rgba(235,252,248,0)');
+      g.fillStyle=cg;g.fillRect(0,0,W,H);
+      g.fillStyle='rgba(190,240,232,'+.16*m+')';g.fillRect(0,0,W,H);
+      for(i=0;i<9;i++){x=((h(i)*W+time*.012*(i%3+1))%(W+300))-150;y=hor+h(i+20)*(H-hor)*.9;
+        var mg2=g.createRadialGradient(x,y,2,x,y,u*.35);mg2.addColorStop(0,'rgba(240,255,252,'+.26*m+')');mg2.addColorStop(1,'rgba(240,255,252,0)');
+        g.fillStyle=mg2;g.fillRect(x-u*.35,y-u*.35,u*.7,u*.7)}
+    }
+  }
+
+  /* ===== scroll, HUD y secciones ===== */
+  var odo=$('#odo'),lab=$('#lab'),secs=$$('[data-label]');
+  function anchorLM(){
+    var hh=root.scrollHeight-innerHeight;if(hh<=0)return;
+    $$('.gap').forEach(function(gp){
+      var L=LM.filter(function(q){return q.k===gp.dataset.lm})[0];if(!L)return;
+      var r=gp.getBoundingClientRect(),cy=r.top+window.scrollY+r.height/2-innerHeight/2;
+      L.z=clamp(cy/hh,0,1)*TOTAL+40;
+    });
+  }
+  function onScroll(){
+    anchorLM();
+    var y=window.scrollY,hh=root.scrollHeight-innerHeight;
+    tg=hh>0?clamp(y/hh,0,1):0;
+    root.style.setProperty('--prog',tg);
+    var cur=secs[0];secs.forEach(function(s){if(s.getBoundingClientRect().top<innerHeight*.55)cur=s});
+    if(lab.textContent!==cur.dataset.label)lab.textContent=cur.dataset.label;
+    if(rm){ps=tg;steerS=steer;draw(0);odo.textContent='KM '+(ps*17).toFixed(1).padStart(4,'0')}
+  }
+  addEventListener('scroll',onScroll,{passive:true});
+  addEventListener('resize',function(){size();onScroll()});
+  function frame(t){
+    var old=ps;ps+=(tg-ps)*.085;steerS+=(steer-steerS)*.05;
+    vel=(ps-old)*TOTAL*2.2;
+    draw(t);
+    odo.textContent='KM '+(ps*17).toFixed(1).padStart(4,'0');
+    requestAnimationFrame(frame);
+  }
+  size();onScroll();
+  if(!rm)requestAnimationFrame(frame);
+
+  /* elegir destino: el camino gira */
+  $$('.sb').forEach(function(b){b.addEventListener('click',function(){
+    steer=+b.dataset.st;
+    $$('.sb').forEach(function(o){o.setAttribute('aria-pressed',o===b)});
+    ['pn-ar','pn-br','pn-py'].forEach(function(id){$('#'+id).hidden=(id!==b.dataset.p)});
+    if(rm){steerS=steer;draw(0)}
+  })});
+
+  /* contadores */
+  if(!rm&&'IntersectionObserver' in window){
+    var io=new IntersectionObserver(function(es){es.forEach(function(e){
+      if(!e.isIntersecting)return;io.unobserve(e.target);
+      var el=e.target,end=parseFloat(el.dataset.count),d=+el.dataset.dec||0,t0=performance.now();
+      (function f(t){var k=clamp((t-t0)/1300,0,1),v=end*(1-Math.pow(1-k,3));el.textContent=v.toFixed(d);if(k<1)requestAnimationFrame(f)})(t0);
+    })},{threshold:.6});
+    $$('[data-count]').forEach(function(n){io.observe(n)});
+  }
+
+  /* tickets */
+  $$('.rn button').forEach(function(b){b.addEventListener('click',function(){var c=$('.rev');c.scrollBy({left:+b.dataset.dir*c.clientWidth*.8,behavior:rm?'auto':'smooth'})})});
+
+  /* formulario */
+  var f=$('#f'),m=$('#m'),c=$('#c');
+  m.addEventListener('input',function(){c.textContent=m.value.length+' / 180'});
+  f.addEventListener('submit',function(ev){
+    ev.preventDefault();
+    var v=function(id){return $('#'+id).value.trim()};
+    var txt='Hola, soy '+v('n')+'. '+v('m')+' (Tel: '+v('t')+' · Email: '+v('e')+')';
+    var url='https://api.whatsapp.com/send?phone=5493548465150&text='+encodeURIComponent(txt);
+    $('#wl').href=url;$('#out').hidden=false;
+    try{window.open(url,'_blank')}catch(err){}
+  });
+})();
+</script>
+
+</body>
+</html>
